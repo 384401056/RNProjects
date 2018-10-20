@@ -1,0 +1,63 @@
+.App {
+  display: flex;
+
+  width: 100%;
+  height: 600px;
+
+
+  align-items: center;/*交叉轴上的对齐方式，居中,居左，居右, 拉伸等*/
+
+  align-content: center;/*出现换行后，在交叉轴上的对齐方式。stretch是默认值*/
+
+  justify-content: center;/*主轴上的对齐方式，居中,居左，居右,平均分布等*/
+
+
+  flex-direction: row;
+  /*flex-direction: row-reverse;!*水平反转排列*!*/
+  /*flex-direction: column-reverse;!*垂直反转排列*!*/
+
+  flex-wrap: nowrap;/*空间不足时，是否换行*/
+
+  /*flex-flow: row nowrap;!*flex-direction和flex-direction的缩写版本*!*/
+
+}
+
+.box1{
+  background: red;
+  height: 100px;
+  width: 80px;
+  align-self: flex-start;/*单独项目在交叉轴上的对齐,伸缩方式，为stretch时，心须没有高度才有效果*/
+  flex-grow:1;
+}
+
+.box2{
+  background: orange;
+  height: 100px;
+  width: 80px;
+  flex-grow: 1;/*单独项目在剩余空间上放大的权重*/
+}
+
+.box3{
+  background: greenyellow;
+  height: 100px;
+  width: 80px;
+  align-self: flex-end;
+  flex-grow: 2;/*单独项目在剩余空间上放大的权重*/
+}
+
+/*
+目前RN支持的flexBox属性有如下6种：
+
+1.alignItems
+
+2.alignSelf
+
+3.flex
+
+4.flexDirection
+
+5.flexWrap
+
+5.justifyContent
+
+*/
