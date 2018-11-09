@@ -7,7 +7,8 @@
  */
 
 import React, { Component } from 'react';
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import Son from './component/Son';
 
 export default class App extends Component {
 
@@ -15,7 +16,8 @@ export default class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      times: 0
+      times: 0,
+      hit: false
     }
   }
 
@@ -25,13 +27,24 @@ export default class App extends Component {
     newTimes++;
     this.setState(
       {
+        hit: true,
         times: newTimes
       }
     );
   }
 
+  //重置times数量
+  timesClear() {
+    console.log("App Click");
+    this.setState(
+      {
+        times: 0
+      }
+    );
+  }
+
   //生命周期函数
-  componentWillMount(){
+  componentWillMount() {
     console.log("componentWillMount");
   }
 
@@ -45,24 +58,29 @@ export default class App extends Component {
         <Text style={styles.welcome}>
           你点了我{this.state.times}次.
         </Text>
+        {
+          //根据hit值决定是否显示子组件.同设置传递给子组件的属性值。
+          //这里传递了状态值和方法.传的方法加了.bind(this),是因为此方法在子类中执行时,方法中的this关键字，作用域变了.加了就不会变.
+          this.state.hit ? <Son times={this.state.times} click={this.timesClear.bind(this)}/> : null
+        }
       </View>
     );
   }
 
-  componentDidMount(){
+  componentDidMount() {
     console.log("componentDidMount");
   }
 
-  shouldComponentUpdate(){
+  shouldComponentUpdate() {
     console.log("shouldComponentUpdate");
     return true;
   }
 
-  componentWillUpdate(){
+  componentWillUpdate() {
     console.log("componentWillUpdate");
   }
 
-  componentDidUpdate(){
+  componentDidUpdate() {
     console.log("componentDidUpdate");
   }
 
