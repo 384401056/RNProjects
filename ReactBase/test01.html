@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="react.js"></script>
+    <script type="text/javascript" src="react-dom.js"></script>
+    <script type="text/javascript" src="browser.min.js"></script>
+</head>
+<body>
+<div id="example">Ha Ha</div>
+
+<script type="text/babel">
+
+    var HelloMessage = React.createClass({
+        render:function () {
+            return <h1>Ha Ha {this.props.name}</h1>;
+        }
+    });
+
+    React.render(<HelloMessage name="你是一个神经病!!!" />, document.getElementById("example"));
+
+
+</script>
+
+</body>
+</html>
