@@ -15,6 +15,7 @@ export default class index extends Component {
         super(props);
         var ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
         this.state = {
+            logs:'',
             //模拟数据源
             dataSource: ds.cloneWithRows([
                 {
@@ -96,7 +97,7 @@ export default class index extends Component {
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
-                    <Text style={styles.hearderTitle}>列表页面</Text>
+                    <Text style={styles.hearderTitle}>{this.state.logs}</Text>
                 </View>
                 <ListView
                     dataSource={this.state.dataSource}
@@ -107,6 +108,28 @@ export default class index extends Component {
             </View>
         );
     }
+
+    componentDidMount() {
+        this.getVideoList();
+    }
+
+    /**
+     * 获取网络数据
+     */
+    getVideoList() {
+        return fetch('http://rap2api.taobao.org/app/mock/117029/api/creations?accessToken=adfd')
+            .then((response) => response.json())
+            .then((responseJson) => {
+                console.log(responseJson);
+                this.setState({
+                    logs:responseJson.lenght
+                });
+            })
+            .catch((error) => {
+                console.error(error);
+            });
+    }
+
 }
 
 const styles = StyleSheet.create({
