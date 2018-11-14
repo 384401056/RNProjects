@@ -7,6 +7,7 @@ export let get = (url, params) => {
     if (params) {
         url += '?' + queryString.stringify(params);
     }
+    console.log("get: "+url);
     return fetch(url)
         .then((response) => response.json());
 }

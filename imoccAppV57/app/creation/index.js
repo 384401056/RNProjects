@@ -81,7 +81,6 @@ export default class index extends Component {
 
                     //2秒以后再加载数据，人造延迟.
                     setTimeout(() => {
-                        console.log(data);
                         this.setState({
                             isRefreshing: false,
                             dataSource: this.state.dataSource.cloneWithRows(cachedResults.items)
@@ -203,13 +202,13 @@ export default class index extends Component {
                     cachedResults.nextPage += 1;
                     cachedResults.total = data.total;
 
-                    //2秒以后再加载数据，人造延迟.
+                    //1秒以后再加载数据，人造延迟.
                     setTimeout(() => {
                         this.setState({
                             isLoading: false,
                             dataSource: this.state.dataSource.cloneWithRows(cachedResults.items)
                         })
-                    }, 2000);
+                    }, 1000);
 
                 }
             })

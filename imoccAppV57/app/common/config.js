@@ -1,6 +1,6 @@
 'use strict'
 
-let hearder = {
+const hearder = {
   method: 'POST',
   headers: {
     'Accept': 'application/json',
@@ -8,9 +8,10 @@ let hearder = {
   }
 }
 
-let api = {
+const api = {
   base: 'http://rap2api.taobao.org/app/mock/117029',
-  creations: '/api/creations'
+  creations: '/api/creations',
+  comments: '/api/comments',
 }
 
 export {hearder, api};
