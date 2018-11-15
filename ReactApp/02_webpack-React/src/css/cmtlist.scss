@@ -1,0 +1,25 @@
+.title{
+    color:red;
+    text-align: center;
+    font-weight: 200;
+}
+
+.content{
+    font-size: 12px
+}
+
+.cmtbox{
+    border: 1px dashed #ccc;
+    margin: 10px;
+    padding: 10px;
+    box-shadow: 0 0 10px #ccc;
+}
+
+/* 此样式不会被模块化，是全局样式 */
+:global(.test)
+{
+    font-style: italic;
+    background-color: aqua;
+    border: 1px solid #ff00ff;
+    border-radius: 5px;
+}
