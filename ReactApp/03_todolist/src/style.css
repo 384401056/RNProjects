@@ -1,0 +1,68 @@
+.show {
+  /* opacity: 1;
+  transition: all 0.5s ease-in; */
+  animation: show-item 2s ease-in forwards;
+}
+
+.hide {
+  /* opacity: 0;
+  transition: all 0.5s ease-out; */
+  animation: hide-item 2s ease-in forwards;
+}
+
+@keyframes show-item {
+  0%{
+    opacity: 0;
+    color: blueviolet;
+  }
+  50%{
+    opacity: 0.5;
+    color: chartreuse;
+  }
+  100%{
+    opacity: 1;
+    color: chocolate;
+  }
+}
+
+@keyframes hide-item {
+  0%{
+    opacity: 1;
+    color: chocolate;
+  }
+  50%{
+    opacity: 0.5;
+    color: chartreuse;
+  }
+  100%{
+    opacity: 0;
+    color: blueviolet;
+  }
+}
+
+
+.fade-enter, .fade-appear{
+  opacity: 0.01;
+  color: green
+} 
+
+.fade-enter-active, .fade-appear-active{
+  opacity: 1;
+  transition: all 1000ms ease-in;
+} 
+
+.fade-enter-done{
+  opacity: 1
+}
+
+.fade-exit {
+  opacity: 1;
+} 
+.fade-exit-active {
+  opacity: 0;
+  transition: all 1000ms ease-out;
+} 
+.fade-exit-done {
+  opacity: 0.01;
+  color: green
+}

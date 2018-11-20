@@ -3,8 +3,7 @@ import CmtItem from '@/components/CmtItem';
 
 //对CSS第三访loader进行参数设置后，才能把css模块导入，否则导入的对象是空的.
 import cssObj from '@/css/cmtlist.scss';
-
-// import bootcss from 'bootstrap/dist/css/bootstrap.css';
+// import bootcss from 'bootstrap/dist/css/bootstrap.css';//可在入口文件中引用。
 
 export default class CmtList extends React.Component {
     constructor(props) {
