@@ -6,7 +6,9 @@ import {
 } from 'antd';
 import 'antd/dist/antd.css';  // or 'antd/dist/antd.less'
 import store from './store/index'
-import ActionTypes from  './store/actionTypes';
+import ActionCreator from './store/actionCreator';
+
+
 
 
 class TodoListWithRedux extends Component {
@@ -69,19 +71,27 @@ class TodoListWithRedux extends Component {
     )
   }
 
+  componentDidMount(){
+    //使用thunk的方式，来发送网络请求
+    const action = ActionCreator.initData();//此处返回的是一个函数。
+    store.dispatch(action);//执行函数
+  }
 
   handleInputChange(e) {
-    const newValue = e.target.value;
+    // const newValue = e.target.value;
 
     // this.setState({
     //   inputValue: newValue,
     // })
 
     //向store发送action,来改写store中的状态值
-    const action = {
-      type: ActionTypes.CHANGE_INPUT_VALUE,//操作类型
-      value: newValue,//新的值
-    }
+    // const action = {
+    //   type: ActionTypes.CHANGE_INPUT_VALUE,//操作类型
+    //   value: newValue,//新的值
+    // }
+
+    //将action的生成进行了封装
+    const action = ActionCreator.changeInputValue(e.target.value);
     store.dispatch(action);
 
   }
@@ -99,10 +109,12 @@ class TodoListWithRedux extends Component {
       }
 
       //向store发送action,来添加item
-      const action = {
-        type: ActionTypes.ADD_ITEM,//操作类型
-        value: item,//新的值
-      }
+      // const action = {
+      //   type: ActionTypes.ADD_ITEM,//操作类型
+      //   value: item,//新的值
+      // }
+
+      const action = ActionCreator.addItem(item);
       store.dispatch(action);
 
 
@@ -119,10 +131,12 @@ class TodoListWithRedux extends Component {
 
   handleDeleteItem(index) {
     //向store发送action,来改写store中的状态值
-    const action = {
-      type: ActionTypes.DELETE_ITEM,//操作类型
-      value: index,//index
-    }
+    // const action = {
+    //   type: ActionTypes.DELETE_ITEM,//操作类型
+    //   value: index,//index
+    // }
+
+    const action = ActionCreator.deleteItem(index);
     store.dispatch(action);
 
 

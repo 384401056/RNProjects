@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react'
 import {
   Input,
   Button,
-  List,
-  Icon
+  List
 } from 'antd';
 import 'antd/dist/antd.css';  // or 'antd/dist/antd.less'
 
