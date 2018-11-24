@@ -47,9 +47,29 @@ export const NavItem = styled.div`
   }
 `;
 
+//用来包裹NavSearch和icon的组件
+export const SearchWrapper = styled.div`
+  position: relative;
+  float: left;
+  .iconFont {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 36px;
+    line-height:36px;
+    text-align:center;
+    border-radius: 18px;
+    &.focused{
+      background: #777;
+      color: #fff;
+    }
+  }
+
+`;
+
 export const NavSearch = styled.input.attrs({
-    placeholder: '搜索',
-  })`
+  placeholder: '搜索',
+})`
   width: 140px;
   height: 38px;
   padding: 0 20px;
@@ -62,7 +82,23 @@ export const NavSearch = styled.input.attrs({
   &::placeholder{
     color: #999;
   }
-`; 
+  &.focused{
+    width: 240px;
+  }
+  /*CSStransition动画的CSS样式, 如果此样式放在上一级组件上不用加 & */
+  &.slide-enter{
+    transition: all 0.5s ease
+  }
+  &.slide-enter-active{
+    width: 240px;
+  }
+  &.slide-exit{
+    transition: all 0.5s ease
+  }
+  &.slide-exit-active{
+    width: 140px;
+  }
+`;
 
 export const Addition = styled.div`
   position: absolute;
