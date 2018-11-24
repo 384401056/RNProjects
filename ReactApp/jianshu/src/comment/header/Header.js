@@ -2,7 +2,7 @@ import React from 'react'
 import { CSSTransition } from 'react-transition-group';
 import { connect } from 'react-redux';
 import { Icon } from 'antd';
-import actionCreator from '../../store/actionCreator'
+import { actionCreator } from './store';
 import {
   HeaderWrapper,
   Logo,
@@ -54,25 +54,23 @@ const Header = (props) => {
 
 const mapStateToProps = (state) => {
   return {
-    focused: state.focused,
+    // focused: state.header.focused,//这里要指明header。因为这里的state是全局的
+    
+    // focused: state.get('header').get('focused'),
+    focused: state.getIn(['header', 'focused']),//功能同上。
+
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
     handleInputFocus() {
-      const action = {
-        type:"search_focus",
-        value: true
-      }
+      const action = actionCreator.search_focus();
       dispatch(action);
     },
 
     handleInputBlur() {
-      const action = {
-        type: "search_blur",
-        value: false
-      }
+      const action = actionCreator.search_blur();
       dispatch(action);
     },
 
