@@ -16,10 +16,30 @@ export const searchBlur = () => {
     }
 }
 
+export const mouseLeave = ()=>{
+    return{
+        type: actionTypes.MOUSELEAVE,
+    }
+}
+
+export const mouseIn = ()=>{
+    return{
+        type: actionTypes.MOUSEIN,
+    }
+}
+
+export const changePage = (page)=>{
+    return{
+        type: actionTypes.CHANGEPAGE,
+        value:page,
+    }
+}
+
+
 /**
  * 更新searchList中的值
  */
-export const changeSearchList = (data)=>{
+const changeSearchList = (data)=>{
     return {
         type: actionTypes.UPDATE_SEARCHLIST,
         value: fromJS(data),
@@ -27,7 +47,7 @@ export const changeSearchList = (data)=>{
 }
 
 /**
- * 获取搜索热门列表
+ * 获取搜索热门列表人ajax请求
  */
 export const getSearchList = ()=>{
     return (dispatch) => {

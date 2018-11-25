@@ -64,7 +64,6 @@ export const SearchWrapper = styled.div`
       color: #fff;
     }
   }
-
 `;
 
 export const NavSearch = styled.input.attrs({
@@ -106,6 +105,7 @@ export const SearchInfo = styled.div`
   top: 56px;
   width: 300px;
   padding: 0 20px;
+  background-color: #fff;
   box-shadow: 0 0 8px rgba(0,0,0, 0.2); /*阴影*/
 `;
 
@@ -117,10 +117,23 @@ export const SearchInfoTitle = styled.div`
   color: #969696;
 `;
 
-export const SearchInfoSwitch = styled.span`
+export const SearchInfoSwitch = styled.a`
   float: right;
   font-size: 12px;
+  display: block;
   color: #969696;
+  .spin {
+    display: block;
+    float:left;
+    font-size: 14px;
+    color: #ec6149;
+    margin-top: 3px;
+    margin-right: 5px;
+    text-align: center;
+    transition: all 0.5s ease-in; /*过渡效果*/
+    transform-origin: center center; /*以自己的中心旋转*/
+    transform: rotate(0deg); /*旋转角度*/
+  }
 `;
 
 export const SearchInfoList = styled.div`
@@ -130,8 +143,8 @@ export const SearchInfoList = styled.div`
 export const SearchInfoItem = styled.a`
   line-height: 20px;
   padding: 0 5px;
-  margin-right: 7px;
-  margin-bottom: 10px;
+  margin-right: 10px;
+  margin-bottom: 15px;
   font-size: 12px;
   border: 1px solid #ddd;
   border-radius: 3px;
