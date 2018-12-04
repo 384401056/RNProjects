@@ -6,6 +6,7 @@ import { GlobalStyle } from "./style";
 import Header from './components/header/Header';
 import Home from './components/home/Home';
 import Detail from './components/detail/Detail';
+import Login from './components/login/Login'
 import store from './store/index';
 
 class App extends Component {
@@ -22,6 +23,7 @@ class App extends Component {
               <Route path="/" exact component={Home} />
               {/**这是一个可以带参数的路由，可匹配：/detail/132132, 在Detail组件中 params: {id: "132132"}  */}
               <Route path="/detail/:id" exact component={Detail}/>
+              <Route path="/login" exact component={Login}/>
             </div>
           </BrowserRouter>
 

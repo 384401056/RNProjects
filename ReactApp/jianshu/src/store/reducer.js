@@ -2,6 +2,7 @@ import { combineReducers } from 'redux-immutable'; //这里使用 redux-immutabl
 import {reducer as heardReducer} from '../components/header/store'; //引入拆分后的reducer.
 import {reducer as homeReducer} from '../components/home/store/';
 import {reducer as detailReducer} from '../components/detail/store';
+import {reducer as loginReducer } from '../components/login/store';
 
 
 const reducer = combineReducers({ 
@@ -10,6 +11,7 @@ const reducer = combineReducers({
     header: heardReducer,//引入拆分后的reducer.
     home: homeReducer,
     detail: detailReducer,
+    login: loginReducer,
 })
 
 export default reducer;
