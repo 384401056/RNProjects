@@ -3,6 +3,7 @@ import { CSSTransition } from 'react-transition-group';
 import { connect } from 'react-redux';
 import { Icon } from 'antd';
 import { actionCreator } from './store';
+import { Link } from 'react-router-dom';
 import {
   HeaderWrapper,
   Logo,
@@ -89,7 +90,9 @@ class Header extends Component {
     return (
       <div>
         <HeaderWrapper>
-          <Logo href='/' />
+          <Link to='/'>
+            <Logo href='/' />
+          </Link>
           <Nav>
             <NavItem className="left active">首页</NavItem>
             <NavItem className="left">下载App</NavItem>
@@ -103,7 +106,7 @@ class Header extends Component {
               >
                 <NavSearch
                   className={focused ? 'focused' : ''}
-                  onFocus={()=>handleInputFocus(searchList)}//带参数要用箭头函数.
+                  onFocus={() => handleInputFocus(searchList)}//带参数要用箭头函数.
                   onBlur={handleInputBlur}
                 >
                 </NavSearch>
@@ -168,12 +171,12 @@ const mapDispatchToProps = (dispatch) => {
       /**通过代码实现旋转动画效果 */
       const spin = this.myRef.current;//通过ref获取DOM元素
       let angle = spin.style.transform.replace(/[^0-9]/ig, '');//获取CSS样式的旋转角度值
-      if(angle){
+      if (angle) {
         angle = parseInt(angle, 10);//转为int
-      }else{
+      } else {
         angle = 0;
       }
-      spin.style.transform = 'rotate('+ (angle+360) +'deg)';//在原来的角度上加360度.
+      spin.style.transform = 'rotate(' + (angle + 360) + 'deg)';//在原来的角度上加360度.
 
 
       //如果当前页是最后一页,则返回第一页

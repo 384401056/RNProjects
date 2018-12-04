@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
 import {
   TopicWrapper,
   TopicItem
@@ -14,15 +15,18 @@ class Topic extends Component {
         {
           list.map((item) => {
             return (
-              <TopicItem key={item.id}>
-                <img className="topic-pic" src={item.url} />
-                {item.title}
-              </TopicItem>
+              //用Link来实现按钮效果及路由跳转。这晨传递了id作为参数
+              <Link to={'/detail/'+item.id} key={item.id}>
+                <TopicItem>
+                  <img alt='' className="topic-pic" src={item.url} />
+                  {item.title}
+                </TopicItem>
+              </Link>
             )
           })
         }
-      <TopicItem className="text-only">
-        更多热门专题 >
+        <TopicItem className="text-only">
+          更多热门专题 >
       </TopicItem>
       </TopicWrapper>
     )

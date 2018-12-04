@@ -32,11 +32,13 @@ export const TopicWrapper = styled.div`
   overflow: hidden;
   padding: 20px 0 10px 0;
   margin-left: -20px;
+  border-bottom: 1px solid #dcdcdc;
 `;
 
 export const TopicItem = styled.div`
   float: left;
   height: 32px;
+  display: block;
   line-height: 32px;
   font-size: 14px;
   color: #000;
@@ -63,3 +65,64 @@ export const TopicItem = styled.div`
 `;
 
 /** ================List组件下的样式组件====================== */
+
+export const ListItem = styled.div`
+  overflow: hidden;
+  padding: 20px 0;
+  border-bottom: 1px solid #dcdcdc;
+  .pic {
+    display: block;
+    float: right;
+    width: 125px;
+    height: 100px;
+    border-radius: 5px;
+  }
+`;
+
+export const ListInfo = styled.div`
+  width: 500px;
+  float: left;
+  .title {
+    line-height: 27px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+  }
+  .desc {
+    line-height: 24px;
+    font-size: 13px;
+    color: #999;
+  }
+`;
+
+/** =========================LoadMore ============================ */
+
+export const LoadMore = styled.div`
+  width: 100%;
+  height: 40px;
+  display: block;
+  line-height: 40px;
+  margin: 30px 0;
+  background: #a5a5a5;
+  text-align: center;
+  border-radius: 20px;
+  color: #fff;
+  cursor: pointer;
+`;
+
+/** ========================= 返回顶部组件 ====================== */
+
+export const BackTop = styled.div`
+  position: fixed;
+  cursor: pointer;
+  right: 100px;
+  bottom: 30px;
+  width: 60px;
+  height: 60px;
+  font-size: 12px;
+  line-height: 60px;
+  text-align: center;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background: #fff;
+`;

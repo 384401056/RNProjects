@@ -14,14 +14,14 @@ class App extends Component {
       <Provider store={store}>
         <div>
           <GlobalStyle /> {/**全局样式 */}
-          <Header /> {/**头部组件 */}
-
           {/** 路由组件 */}
           <BrowserRouter>
             <div>
+              <Header /> {/**头部组件 */}
               {/** 路由规则 */}
               <Route path="/" exact component={Home} />
-              <Route path="/detail" exact component={Detail}/>
+              {/**这是一个可以带参数的路由，可匹配：/detail/132132, 在Detail组件中 params: {id: "132132"}  */}
+              <Route path="/detail/:id" exact component={Detail}/>
             </div>
           </BrowserRouter>
 

@@ -1,1 +1,1 @@
-// export const SEACH_FOCUS = 'header/SEACH_FOCUS';
+export const CHANGE_ARTICLEDESC = 'detail/CHANGE_ARTICLEDESC';
