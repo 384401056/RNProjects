@@ -8,7 +8,7 @@ const defaultState = fromJS(
     showScrollBtn: false, //是否显示回到顶部的按钮.
     currentPage: 1,
     topicList:[],
-    articleList:[]
+    articleList:[],
   }
 )
 
@@ -18,7 +18,7 @@ export default (state = defaultState, action) => {
     case actionTypes.CHANGE_ART_LIST:
       return state.merge({
         topicList: fromJS(action.topicList),
-        articleList: fromJS(action.articleList)
+        articleList: fromJS(action.articleList),
       });
     case actionTypes.GET_MORE_LIST:
       return state.merge({

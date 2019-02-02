@@ -14,7 +14,7 @@ import {
 
 class Home extends Component {
   render() {
-    const { showScrollBtn } = this.props;
+    const { showScrollBtn, detialData } = this.props;
     return (
       <HomeWrapper>
         <HomeLeft>

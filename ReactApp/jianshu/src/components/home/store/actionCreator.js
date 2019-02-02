@@ -12,10 +12,10 @@ const changeTopicList = (topicList, articleList) => {
 }
 
 
-
 function getTopicList() {
     return axios.get('http://rap2api.taobao.org/app/mock/118170/api/topicList');
 }
+
 
 function getArticleList() {
     return axios.get('http://rap2api.taobao.org/app/mock/118170/api/articleList');
@@ -26,8 +26,9 @@ export const getHomeInfo = () => {
     return (dispatch) => {
         //并发多个请求
         axios.all([getTopicList(), getArticleList()])
-            .then(axios.spread((topicList, articleList) => {
-                dispatch(changeTopicList(topicList.data.data, articleList.data.data));
+            .then(axios.spread((topicList, articleList, detailsData) => {
+                console.log("DetailsData", detailsData.data.data);
+                dispatch(changeTopicList(topicList.data.data, articleList.data.data,detailsData.data.data));
             })).catch((error) => {
                 console.log(error);
             });
