@@ -1,0 +1,27 @@
+// @colorGray: gray; //变量
+
+// div {
+//     background-color: @colorGray;
+// }
+
+@import './default.less';
+
+.container{
+    display: flex;
+    .nav-left{
+        width: 15%;
+        height: calc(100vh);
+        min-width: 220px;
+        background-color: #001529;
+    }
+    .main{
+        width: 85%;
+        min-width: 300px; 
+        height: calc(100vh);
+        background-color: @colorI;
+    }
+    .content {
+        position: relative;
+        padding: 20px;
+      }
+}
