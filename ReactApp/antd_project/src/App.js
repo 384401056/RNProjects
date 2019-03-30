@@ -8,21 +8,48 @@ import NavLeft from './components/NavLeft';
 import './style/common.less';
 import Home from './page/home';
 
+import {
+  Layout, Menu, Breadcrumb, Icon,
+} from 'antd';
+
+const { SubMenu } = Menu;
+const {
+  Content, Sider,
+} = Layout;
+
+
 class App extends Component {
   render() {
     return (
-      <Row className="container">
-        <Col span="3" className="nav-left">
-          <NavLeft/>
-        </Col>
-        <Col span="21" className="main">
-          <Header/>
-          <Row className="content">
-            <Home/>
-          </Row>
-          <Footer/>
-        </Col>
-      </Row>
+      <Layout className="app">
+        <Layout className="container">
+          <NavLeft />
+          <Content style={{ padding: '0 24px', minHeight: 280 }}>
+            <Header />
+            <Home />
+          </Content>
+        </Layout>
+        <Layout style={{ textAlign: 'center' }}>
+          <Footer />
+        </Layout>
+      </Layout>
+
+
+
+      // <Row className="container">
+      //   <Col span="2" className="nav-left">
+      //     <NavLeft />
+      //   </Col>
+      //   <Col span="22" className="main">
+      //     <Row>
+      //       <Header />
+      //     </Row>
+      //     <Row className="content">
+      //       <Home />
+      //     </Row>
+      //     <Footer />
+      //   </Col>
+      // </Row>
     );
   }
 }

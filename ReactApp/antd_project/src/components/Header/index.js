@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { Row, Col } from 'antd'
+import { Row, Col, Layout } from 'antd'
 import './index.less'
 import axios from 'axios';
+import utils from '../../utils/utils';
 
 export default class Header extends Component {
 
@@ -28,13 +29,15 @@ export default class Header extends Component {
     //   url: '/user/login',
     //   data: fd,
     //   headers: {'Content-Type': 'application/json;charset=UTF-8',}
+    // }).then((res)=>{
+    //   console.log(res.data);
     // });
 
+    //定时获取系统时间
     setInterval(() => {
-      let currentTime = new Date();
+      let currentTime = utils.formatDate(new Date());
       this.setState({
-        sysTime:currentTime.getFullYear() + "年" + currentTime.getMonth() + "月" + currentTime.getDay() + "日   " +
-        currentTime.getHours() + ":" + currentTime.getMinutes() + ":" + currentTime.getSeconds()
+        sysTime:currentTime
       })
     }, 1000);
 
@@ -42,7 +45,7 @@ export default class Header extends Component {
 
   render() {
     return (
-      <div className="header">
+      <Layout className="header">
         <Row className="header-top">
           <Col span="20">
             <span>欢迎, {this.state.userName}</span>
@@ -59,8 +62,8 @@ export default class Header extends Component {
             <span style={{paddingRight:20}}>{this.state.sysTime}</span>
             <span>晴转多云 18-20度</span>
           </Col>
-        </Row>
-      </div>
+        </Row> 
+      </Layout>
     )
   }
 }

@@ -1,26 +1,26 @@
 import React, { Component } from 'react'
-import { Menu, Icon } from 'antd'
+import { Menu, Icon ,Row} from 'antd'
 import menuConfig from './../../resource/menuConfig'
 import './index.less'
+import Sider from 'antd/lib/layout/Sider';
 
 const SubMenu = Menu.SubMenu;
 export default class NavLeft extends Component {
 
-  componentWillMount(){
+  componentWillMount() {
     const menuTreeNode = this.renderMenu(menuConfig)
 
     this.setState({
       menuTreeNode
     })
   }
-
-
   /**
    * 菜单渲染
    */
-  renderMenu = (data)=>{
-    return data.map((item)=>{
-      if(item.children){
+  renderMenu = (data) => {
+    return data.map((item) => {
+      //如果有子菜单就递归
+      if (item.children) {
         return (
           <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
             {
@@ -30,8 +30,11 @@ export default class NavLeft extends Component {
           </SubMenu>
         );
       }
+      //如果没有，就返回。
       return (
-        <Menu.Item key={item.key}>{item.title}</Menu.Item>
+        <Menu.Item key={item.key}>
+          {item.title}
+        </Menu.Item>
       );
     });
   }
@@ -39,10 +42,14 @@ export default class NavLeft extends Component {
 
   render() {
     return (
-      <div>
+      <Sider>
         <div className="logo">
-          <img src="/assets/logo-ant.svg" alt="" />
-          <h1>Imooc MS </h1>
+          <Row>
+            <img src="/assets/logo-ant.svg" alt="" />
+          </Row>
+          <Row>
+            <h1>若邻云报销管理后台</h1>
+          </Row>
         </div>
         <div>
           <Menu className="menu"
@@ -57,8 +64,7 @@ export default class NavLeft extends Component {
             }
           </Menu>
         </div>
-      </div>
-
+        </Sider>
     )
   }
 }
