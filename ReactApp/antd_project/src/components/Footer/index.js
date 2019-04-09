@@ -5,7 +5,7 @@ export default class Footer extends Component {
   render() {
     return (
       <div className="footer">
-        版权所有: Ant Design ©2018 Created by Ant UED
+        版权所有: 云南若邻网络科技有限公司 ©2019 
       </div>
     )
   }
