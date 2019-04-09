@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import { Menu, Icon ,Row} from 'antd'
-import menuConfig from './../../resource/menuConfig'
+import { Menu, Icon, Row } from 'antd'
+import menuConfig from './../../resource/menu'
 import './index.less'
 import Sider from 'antd/lib/layout/Sider';
+import { Link } from 'react-router-dom';
 
 const SubMenu = Menu.SubMenu;
 export default class NavLeft extends Component {
@@ -33,7 +34,9 @@ export default class NavLeft extends Component {
       //如果没有，就返回。
       return (
         <Menu.Item key={item.key}>
-          {item.title}
+          <Link to = {"/admin"+item.key}>
+            <span><Icon type={item.icon} /><span>{item.title}</span></span>
+          </Link>
         </Menu.Item>
       );
     });
@@ -57,14 +60,11 @@ export default class NavLeft extends Component {
             defaultSelectedKeys={['1']}
             defaultOpenKeys={['sub1']}
             mode="inline"
-            theme="dark"
-          >
-            {
-              this.state.menuTreeNode
-            }
+            theme="light">
+            {this.state.menuTreeNode}
           </Menu>
         </div>
-        </Sider>
+      </Sider>
     )
   }
 }

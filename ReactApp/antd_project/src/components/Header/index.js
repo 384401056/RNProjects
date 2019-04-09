@@ -47,18 +47,18 @@ export default class Header extends Component {
     return (
       <Layout className="header">
         <Row className="header-top">
-          <Col span="20">
+          <Col span={20}>
             <span>欢迎, {this.state.userName}</span>
           </Col>
-          <Col span="4">
+          <Col span={4}>
             <a href="#">退出</a>
           </Col>
         </Row>
         <Row className="breadcrumb">
-          <Col span="4" className="breadcrumb-title">
-            首页
+          <Col span={4}>
+            {/* 首页 */}
           </Col>
-          <Col span="20" className="breadcrumb-weather">
+          <Col span={20} className="breadcrumb-weather">
             <span style={{paddingRight:20}}>{this.state.sysTime}</span>
             <span>晴转多云 18-20度</span>
           </Col>
