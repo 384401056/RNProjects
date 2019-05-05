@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './index.less';
+import '../../commont/config'
 import {
     Row, Col, Button, Table, Modal, Tree, Input,
     Tabs, Upload, Icon, message,
@@ -15,7 +16,9 @@ export default class BaseCount extends Component {
     }
 
     componentDidMount() {
-
+        this.setState({
+            hasAuth: global.constants.checkPermission("/datasta/baseData"),
+        })
     }
 
     render() {

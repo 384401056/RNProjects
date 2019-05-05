@@ -4,6 +4,7 @@ import {
     Row, Col, Button, Table, Modal, Tree, Input,
     Tabs, Upload, Icon, message,
 } from 'antd';
+import '../../commont/config'
 
 const confirm = Modal.confirm;
 const { TreeNode } = Tree;
@@ -157,7 +158,7 @@ export default class CompRole extends Component {
 
     componentDidMount() {
         this.setState({
-            hasAuth: true
+            hasAuth: global.constants.checkPermission("/company/role"),
         })
     }
 

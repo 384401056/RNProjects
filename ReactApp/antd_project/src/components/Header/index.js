@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
-import { Row, Col, Layout } from 'antd'
+import { Row, Col, Layout,Button } from 'antd'
+import { withRouter } from 'react-router-dom';
 import './index.less'
 import axios from 'axios';
 import utils from '../../utils/utils';
 
-export default class Header extends Component {
+class Header extends Component {
 
   constructor(props){
     super(props);
@@ -16,7 +17,7 @@ export default class Header extends Component {
 
   componentWillMount() {
     this.setState({
-      userName: '河畔一角'
+      userName: JSON.parse(sessionStorage.getItem("userInfo")).name,
     })
 
     //发送post请求。
@@ -43,6 +44,15 @@ export default class Header extends Component {
 
   }
 
+  /**
+   * 退出登录
+   */
+  loginOut=()=>{
+    sessionStorage.clear();
+    //这里注意，将整个给组件做为withRouter的参数导出。才能使用history。
+    this.props.history.push("/")
+  }
+
   render() {
     return (
       <Layout className="header">
@@ -51,7 +61,8 @@ export default class Header extends Component {
             <span>欢迎, {this.state.userName}</span>
           </Col>
           <Col span={4}>
-            <a href="#">退出</a>
+            {/* <NavLink to={this.loginOut} exact>退出登录</NavLink> */}
+            <a onClick={this.loginOut}>退出登录</a>
           </Col>
         </Row>
         <Row className="breadcrumb">
@@ -60,10 +71,12 @@ export default class Header extends Component {
           </Col>
           <Col span={20} className="breadcrumb-weather">
             <span style={{paddingRight:20}}>{this.state.sysTime}</span>
-            <span>晴转多云 18-20度</span>
+            {/* <span>晴转多云 18-20度</span> */}
           </Col>
         </Row> 
       </Layout>
     )
   }
 }
+
+export default withRouter(Header);

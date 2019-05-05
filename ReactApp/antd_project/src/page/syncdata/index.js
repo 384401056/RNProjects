@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.less';
+import '../../commont/config'
 import {
     Row, Col, Button, Table, Modal, Tree, Input,
     Switch, TreeSelect, Icon, message, Checkbox,
@@ -108,7 +109,7 @@ export default class SyncData extends Component {
         this.setState({
             compData: datalist,
             userData: userDataList,
-            hasAuth: true
+            hasAuth: global.constants.checkPermission("/company/syncData"),
         })
     }
 

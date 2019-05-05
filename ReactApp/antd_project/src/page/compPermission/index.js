@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.less';
+import '../../commont/config'
 import {
     Row, Col, Button, Table, Modal, TreeSelect, Input,
     Tabs, Upload, Icon, message,
@@ -98,7 +99,7 @@ export default class CompPermission extends Component {
         }
         this.setState({
             data: datalist,
-            hasAuth: true
+            hasAuth: global.constants.checkPermission("/company/setRole"),
         })
     }
 

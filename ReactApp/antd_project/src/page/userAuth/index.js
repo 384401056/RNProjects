@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.less';
+import '../../commont/config'
 import {
   Row, Col, Button, Table, Modal, Tree, Input,
   Switch, TreeSelect, Icon, message,
@@ -70,7 +71,7 @@ export default class UserAuth extends Component {
     console.log(this.state.data);
     this.setState({
       data: datalist,
-      hasAuth: true
+      hasAuth: global.constants.checkPermission("/manager/setRole"),
     })
   }
 

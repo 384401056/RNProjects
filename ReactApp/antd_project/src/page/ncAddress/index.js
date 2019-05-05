@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import './index.less';
+import '../../commont/config'
 import {
   Row, Col, Button, Table, Modal, Radio, Input, message,
 } from 'antd'
-
 const confirm = Modal.confirm;
 export default class NcAddress extends Component {
 
@@ -73,7 +73,7 @@ export default class NcAddress extends Component {
 
   componentDidMount(){
     this.setState({
-      hasAuth : true
+      hasAuth: global.constants.checkPermission("/manager/nc"),
     }
     )
   }

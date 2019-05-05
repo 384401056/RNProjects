@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Menu, Icon, Row } from 'antd'
-import menuConfig from './../../resource/menu'
 import './index.less'
 import Sider from 'antd/lib/layout/Sider';
 import { Link } from 'react-router-dom';
@@ -8,9 +7,19 @@ import { Link } from 'react-router-dom';
 const SubMenu = Menu.SubMenu;
 export default class NavLeft extends Component {
 
-  componentWillMount() {
-    const menuTreeNode = this.renderMenu(menuConfig)
+  constructor(props){
+    super(props);
+    this.state = {
+      menuTreeNode:null,
+    }
+  }
 
+
+  componentDidMount() {
+    //将JSON字符串转为对象.
+    let menuList = JSON.parse(sessionStorage.getItem("permissions"));
+    console.log(menuList);
+    const menuTreeNode = this.renderMenu(menuList);
     this.setState({
       menuTreeNode
     })
@@ -23,7 +32,7 @@ export default class NavLeft extends Component {
       //如果有子菜单就递归
       if (item.children) {
         return (
-          <SubMenu key={item.key} title={<span><Icon type={item.icon} /><span>{item.title}</span></span>}>
+          <SubMenu key={item.id} title={<span><Icon type={item.icon} /><span>{item.name}</span></span>}>
             {
               //递归调用
               this.renderMenu(item.children)
@@ -33,9 +42,14 @@ export default class NavLeft extends Component {
       }
       //如果没有，就返回。
       return (
-        <Menu.Item key={item.key}>
-          <Link to = {"/admin"+item.key}>
-            <span><Icon type={item.icon} /><span>{item.title}</span></span>
+        <Menu.Item key={item.id}>
+          <Link to = {"/admin"+item.url}>
+            {
+              item.icon?<span><Icon type={item.icon} /><span>{item.name}</span></span>
+              :
+              <span>{item.name}</span>
+            }
+            
           </Link>
         </Menu.Item>
       );
@@ -57,8 +71,6 @@ export default class NavLeft extends Component {
         <div>
           <Menu className="menu"
             onClick={this.handleClick}
-            defaultSelectedKeys={['1']}
-            defaultOpenKeys={['sub1']}
             mode="inline"
             theme="light">
             {this.state.menuTreeNode}

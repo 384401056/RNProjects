@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import './index.less';
+import '../../commont/config'
 import {
     Row, Col, Button, Table, Modal, Radio, Input,
     TreeSelect, Tabs, Upload, Icon, message, InputNumber,
@@ -85,7 +86,7 @@ export default class Banner extends Component {
 
     componentDidMount() {
         this.setState({
-            hasAuth: true,
+            hasAuth: global.constants.checkPermission("/content/banner"),
         })
     }
 

@@ -14,23 +14,45 @@ const {
 } = Layout;
 
 export class Admin extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            hasAuth: false,
+        }
+    }
+
+    componentDidMount() {
+        this.setState({
+            hasAuth: global.constants.checkToken(),
+        })
+    }
+
+
     render() {
+        const { hasAuth } = this.state;
+        if (hasAuth) {
+            return (
+                <Layout className="app">
+                    <Layout className="admin_wrap">
+                        <Sider>
+                            <NavLeft />
+                        </Sider>
+                        <Content style={{ padding: '0 24px', minHeight: 280 }}>
+                            <Header />
+                            {/* <Home /> */}
+                            {this.props.children}
+                        </Content>
+                    </Layout>
+                    <Layout style={{ textAlign: 'center' }}>
+                        <Footer />
+                    </Layout>
+                </Layout>
+            )
+        }
         return (
-            <Layout className="app">
-                <Layout className="admin_wrap">
-                    <Sider>
-                        <NavLeft />
-                    </Sider>
-                    <Content style={{ padding: '0 24px', minHeight: 280 }}>
-                        <Header />
-                        {/* <Home /> */}
-                        {this.props.children}
-                    </Content>
-                </Layout>
-                <Layout style={{ textAlign: 'center' }}>
-                    <Footer />
-                </Layout>
-            </Layout>
+            <div>
+                无访问权限
+            </div>
         )
     }
 }
