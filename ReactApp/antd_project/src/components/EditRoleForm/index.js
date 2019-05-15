@@ -18,7 +18,7 @@ const formItemLayout = {
     },
 };
 
-export default class CreateRoleForm extends Component {
+export default class EditRoleForm extends Component {
 
     constructor(props) {
         super(props)
@@ -30,14 +30,8 @@ export default class CreateRoleForm extends Component {
             //表单验证
             validateList: [],
             //选中的父节点
-            halfCheckedKeys:[],
-            formData: {
-                name: "",
-                remark: "",
-                perms: "",
-                //选择的权限id列表
-                permissionIds: []
-            }
+            halfCheckedKeys: [],
+            formData: {},
         }
     }
 
@@ -46,9 +40,27 @@ export default class CreateRoleForm extends Component {
     }
 
     /**
+     * 当props属性值变化时，执行。
+     */
+    componentWillReceiveProps(newProps) {
+        console.log("newProps:", newProps);
+        if (JSON.stringify(newProps.editFormData) !== "{}") {
+            this.setState({
+                formData: newProps.editFormData,
+            })
+        }
+    }
+
+    /**
      * 当props的值改变时，调用此方法。同时setState()也会调用此方法。
      */
     componentDidUpdate(prevProps) {
+        // console.log("prevProps", prevProps);
+        // if (!this.state.permissionList) {
+        //     this.setState({
+        //         permissionList: this.props.permissionList,
+        //     })
+        // }
 
         //清空上次输入的内容。
         if (!this.props.visible) {
@@ -79,10 +91,10 @@ export default class CreateRoleForm extends Component {
             let tempFormData = this.state.formData;
             //将父节点加入 选中的permissionIds 
             tempFormData.permissionIds = tempFormData.permissionIds.concat(this.state.halfCheckedKeys)
-            if (!this.roleValidate(this.state.formData)) {
+            if (!this.roleValidate(tempFormData)) {
                 return;
             }
-            this.props.onOk(this.state.formData)
+            this.props.onOk(tempFormData)//执行父组件的方法
         }
     }
 
@@ -151,6 +163,7 @@ export default class CreateRoleForm extends Component {
     onTreeSelected = (checkedKeys, info) => {
         let tempFormData = this.state.formData;
         // checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //合并子节点和父节点
+
         tempFormData.permissionIds = checkedKeys;
         // console.log("permissionIds:", tempFormData.permissionIds)
         this.setState({
@@ -166,9 +179,9 @@ export default class CreateRoleForm extends Component {
         return (
             <Modal
                 visible={this.props.visible}
-                title="创建角色"
+                title="编辑角色"
                 onOk={this.handleOk}
-                onCancel={this.handleCancel}
+                onCancel={this.handleCancel} //关闭窗口的按钮
                 maskClosable={false}
                 footer={[
                     <Button key="back" onClick={this.handleCancel}>取消</Button>,
@@ -215,9 +228,8 @@ export default class CreateRoleForm extends Component {
                                 <Row className="role_modalRow">
                                     <Col span={24}>
                                         <Tree
-                                            ref = "tree"
                                             checkable
-                                            checkedKeys = {this.state.formData.permissionIds}
+                                            checkedKeys={this.state.formData.permissionIds}
                                             onCheck={this.onTreeSelected}>
                                             {
                                                 (this.props.permissionList) ?

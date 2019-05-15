@@ -255,7 +255,7 @@ export default class CreatePmsForm extends Component {
                         <Form.Item
                             label="名称"
                             {...validateList[0]}>
-                            <Input placeholder="请输入名称" onChange={(e) => {
+                            <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
                                 let tempFormData = this.state.formData;
                                 tempFormData.name = e.target.value;
                                 this.setState({
@@ -289,7 +289,7 @@ export default class CreatePmsForm extends Component {
                         <Form.Item
                             label="路由地址"
                             {...validateList[2]}>
-                            <Input placeholder="目录为空，菜单以'/'开头输入。"
+                            <Input placeholder="目录为空，菜单以'/'开头输入。" maxLength={32}
                                 onChange={(e) => {
                                     let tempFormData = this.state.formData;
                                     tempFormData.url = e.target.value;
@@ -302,7 +302,8 @@ export default class CreatePmsForm extends Component {
                         <Form.Item
                             label="图标名称"
                             {...validateList[3]}>
-                            <Input placeholder="https://ant.design/中的图标名" disabled={pmsType == 1}
+                            <Input placeholder="https://ant.design/中的图标名" maxLength={32}
+                                disabled={pmsType == 1}
                                 onChange={(e) => {
                                     let tempFormData = this.state.formData;
                                     tempFormData.icon = e.target.value;

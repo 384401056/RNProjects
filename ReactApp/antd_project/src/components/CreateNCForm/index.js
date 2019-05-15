@@ -18,7 +18,7 @@ const formItemLayout = {
     },
 };
 
-export default class CreateRoleForm extends Component {
+export default class CreateNCForm extends Component {
 
     constructor(props) {
         super(props)
@@ -29,14 +29,10 @@ export default class CreateRoleForm extends Component {
             permissionList: null,
             //表单验证
             validateList: [],
-            //选中的父节点
-            halfCheckedKeys:[],
             formData: {
                 name: "",
-                remark: "",
-                perms: "",
-                //选择的权限id列表
-                permissionIds: []
+                code: "",
+                url: "",
             }
         }
     }
@@ -45,11 +41,15 @@ export default class CreateRoleForm extends Component {
 
     }
 
+
+    componentWillReceiveProps(newProps){
+
+    }
+
     /**
      * 当props的值改变时，调用此方法。同时setState()也会调用此方法。
      */
     componentDidUpdate(prevProps) {
-
         //清空上次输入的内容。
         if (!this.props.visible) {
             this.clearFormData();
@@ -64,9 +64,8 @@ export default class CreateRoleForm extends Component {
     clearFormData = () => {
         this.state.formData = {
             name: "",
-            remark: "",
-            perms: "",
-            permissionIds: []
+            code: "",
+            url: "",
         }
     }
 
@@ -74,12 +73,10 @@ export default class CreateRoleForm extends Component {
      * 保存按钮事件
      */
     handleOk = () => {
+        console.log("handleOk")
         this.state.validateList = [];//清空验证信息
         if (this.props.onOk) {
-            let tempFormData = this.state.formData;
-            //将父节点加入 选中的permissionIds 
-            tempFormData.permissionIds = tempFormData.permissionIds.concat(this.state.halfCheckedKeys)
-            if (!this.roleValidate(this.state.formData)) {
+            if (!this.ncValidate(this.state.formData)) {
                 return;
             }
             this.props.onOk(this.state.formData)
@@ -89,7 +86,7 @@ export default class CreateRoleForm extends Component {
     /**
      * 输入校验
      */
-    roleValidate = (tempFormData) => {
+    ncValidate = (tempFormData) => {
         this.state.validateList = [];//清空验证信息
         let result = true;
         let vd = this.state.validateList;
@@ -100,17 +97,17 @@ export default class CreateRoleForm extends Component {
             }
             result = false;
         }
-        if (tempFormData.perms === "") {
+        if (tempFormData.code === "") {
             vd[1] = {
                 validateStatus: "error",
-                help: "请输入角色标识"
+                help: "请输入编码"
             }
             result = false;
         }
-        if (tempFormData.permissionIds === undefined || tempFormData.permissionIds.length == 0) {
-            vd[3] = {
+        if (tempFormData.url === "") {
+            vd[2] = {
                 validateStatus: "error",
-                help: "请选择角色的权限!"
+                help: "请输入地址"
             }
             result = false;
         }
@@ -150,11 +147,10 @@ export default class CreateRoleForm extends Component {
 
     onTreeSelected = (checkedKeys, info) => {
         let tempFormData = this.state.formData;
-        // checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //合并子节点和父节点
+        checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //合并子节点和父节点
         tempFormData.permissionIds = checkedKeys;
         // console.log("permissionIds:", tempFormData.permissionIds)
         this.setState({
-            halfCheckedKeys: info.halfCheckedKeys,
             formData: tempFormData,
         })
     }
@@ -166,20 +162,21 @@ export default class CreateRoleForm extends Component {
         return (
             <Modal
                 visible={this.props.visible}
-                title="创建角色"
+                title="创建NC客户"
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
                 maskClosable={false}
-                footer={[
-                    <Button key="back" onClick={this.handleCancel}>取消</Button>,
-                    <Button key="submit" type="primary" onClick={this.handleOk}>保存</Button>,
-                ]}
+                // footer={[
+                //     <Button key="back" onClick={this.handleCancel}>取消</Button>,
+                //     <Button key="submit" type="primary" onClick={this.handleOk}>保存</Button>,
+                // ]}
             >
                 <Spin spinning={this.props.loading}>
                     <Form {...formItemLayout}>
-                        <Form.Item label="角色名称" {...validateList[0]}>
+                        <Form.Item label="客户名称" 
+                        {...validateList[0]}>
                             <div>
-                                <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
+                                <Input placeholder="请输入名称" maxLength={16} onChange={(e) => {
                                     let tempFormData = this.state.formData;
                                     tempFormData.name = e.target.value;
                                     this.setState({
@@ -188,57 +185,28 @@ export default class CreateRoleForm extends Component {
                                 }} value={this.state.formData.name} />
                             </div>
                         </Form.Item>
-                        <Form.Item label="角色标识" {...validateList[1]}>
+                        <Form.Item label="集团编码" 
+                        {...validateList[1]}>
                             <div>
-                                <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
+                                <Input placeholder="请输入编码" maxLength={16} onChange={(e) => {
                                     let tempFormData = this.state.formData;
-                                    tempFormData.perms = e.target.value;
+                                    tempFormData.code = e.target.value;
                                     this.setState({
                                         formData: tempFormData
                                     })
-                                }} value={this.state.formData.perms} />
+                                }} value={this.state.formData.code} />
                             </div>
                         </Form.Item>
-                        <Form.Item label="角色描述" {...validateList[2]}>
+                        <Form.Item label="NC地址" 
+                        {...validateList[2]}>
                             <div>
-                                <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
+                                <Input placeholder="请输入地址" onChange={(e) => {
                                     let tempFormData = this.state.formData;
-                                    tempFormData.remark = e.target.value;
+                                    tempFormData.url = e.target.value;
                                     this.setState({
                                         formData: tempFormData
                                     })
-                                }} value={this.state.formData.remark} />
-                            </div>
-                        </Form.Item>
-                        <Form.Item label="角色授权" {...validateList[3]}>
-                            <div>
-                                <Row className="role_modalRow">
-                                    <Col span={24}>
-                                        <Tree
-                                            ref = "tree"
-                                            checkable
-                                            checkedKeys = {this.state.formData.permissionIds}
-                                            onCheck={this.onTreeSelected}>
-                                            {
-                                                (this.props.permissionList) ?
-                                                    this.props.permissionList.map((item) => {
-                                                        return (
-                                                            <TreeNode title={item.name} key={item.id}>
-                                                                {
-                                                                    (item.children) ?
-                                                                        item.children.map((c_item) => {
-                                                                            return (
-                                                                                <TreeNode title={c_item.name} key={c_item.id}></TreeNode>
-                                                                            )
-                                                                        }) : null
-                                                                }
-                                                            </TreeNode>
-                                                        )
-                                                    }) : null
-                                            }
-                                        </Tree>
-                                    </Col>
-                                </Row>
+                                }} value={this.state.formData.url} />
                             </div>
                         </Form.Item>
                     </Form>

@@ -289,6 +289,7 @@ export default class SyncData extends Component {
                     <Input
                         ref={node => { this.searchInput = node; }}
                         placeholder={`查找 ${indexName}`}
+                        maxLength={32}
                         value={selectedKeys[0]}
                         onChange={e => setSelectedKeys(e.target.value ? [e.target.value] : [])}
                         onPressEnter={() => this.handleSearch(selectedKeys, confirm)}

@@ -9,7 +9,7 @@ import Module from './page/module';
 import Permission from './page/permission';
 import Role from './page/role';
 import NcAddress from './page/ncAddress';
-import UserAuth from './page/userAuth';
+import UserManage from './page/userManage';
 import SyncData from './page/syncdata';
 import CompRole from './page/compRole';
 import CompPermission from './page/compPermission';
@@ -38,7 +38,7 @@ export default class IRouter extends Component {
                     <Route path={"/admin/manager/permission"} component={Permission} />
                     <Route path={"/admin/manager/role"} component={Role} />
                     <Route path={"/admin/manager/nc"} component={NcAddress} />
-                    <Route path={"/admin/manager/setRole"} component={UserAuth} />
+                    <Route path={"/admin/manager/setRole"} component={UserManage} />
                     <Route path={"/admin/company/syncData"} component={SyncData} />
                     <Route path={"/admin/company/role"} component={CompRole} />
                     <Route path={"/admin/company/setRole"} component={CompPermission} />

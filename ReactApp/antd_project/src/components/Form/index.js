@@ -79,7 +79,6 @@ class LoginForm extends Component {
             data: fd,
             headers: { 'Content-Type': 'application/json;charset=UTF-8', }
         }).then((res) => {
-            console.log(res.data);
             if (res.data.code === 0) {
                 //存储用户登录信息到sessionStorage
                 sessionStorage.setItem("permissions", JSON.stringify(res.data.data.permissions))
@@ -89,7 +88,7 @@ class LoginForm extends Component {
                 //这里注意，将整个给组件做为withRouter的参数导出。才能使用history。
                 this.props.history.push("/admin/home")
             } else {
-                console.log("登录失败")
+                message.error(res.data.msg);
                 this.setState({
                     codeStatus:false,
                 })
@@ -125,14 +124,16 @@ class LoginForm extends Component {
                         {getFieldDecorator('userName', {
                             rules: [{ required: true, message: '请输入用户名!' }],
                         })(
-                            <Input ref={(input) => { this.accoutInput = input.value; }} prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
+                            <Input ref={(input) => { this.accoutInput = input.value; }} maxLength={16}
+                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
                         )}
                     </Form.Item>
                     <Form.Item>
                         {getFieldDecorator('password', {
                             rules: [{ required: true, message: '新输入密码!' }],
                         })(
-                            <Input ref={(input) => { this.passwordInput = input.value; }} prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
+                            <Input ref={(input) => { this.passwordInput = input.value; }} maxLength={16}
+                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
                         )}
                     </Form.Item>
                     <Form.Item>

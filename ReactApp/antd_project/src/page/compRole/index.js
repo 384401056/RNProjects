@@ -188,7 +188,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" />
+                            <Input placeholder="" maxLength={32}/>
                         </div>
                     </Col>
                 </Row>
@@ -200,7 +200,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" />
+                            <Input placeholder="" maxLength={32}/>
                         </div>
                     </Col>
                 </Row>
@@ -212,7 +212,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" />
+                            <Input placeholder="" maxLength={32}/>
                         </div>
                     </Col>
                 </Row>

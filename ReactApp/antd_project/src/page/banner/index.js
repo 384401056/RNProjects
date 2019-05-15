@@ -131,7 +131,7 @@ export default class Banner extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" />
+                            <Input placeholder="" maxLength={64}/>
                         </div>
                     </Col>
                 </Row>

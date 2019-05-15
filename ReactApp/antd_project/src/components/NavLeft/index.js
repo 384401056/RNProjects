@@ -65,7 +65,7 @@ export default class NavLeft extends Component {
             <img src="/assets/logo-ant.svg" alt="" />
           </Row>
           <Row>
-            <h1>若邻云报销管理后台</h1>
+            <h1>若邻云管理后台</h1>
           </Row>
         </div>
         <div>

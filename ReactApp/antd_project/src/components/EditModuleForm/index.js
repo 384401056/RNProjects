@@ -27,7 +27,6 @@ export default class EditModuleFormByModal extends Component {
             treeSelectvalue: "",
             upFileLoading: false,
             imageUrl: "",
-            moduleType: 0,
             defalutThemeColor: "#f44336",
             parentModuleList: null,
             //表单验证
@@ -42,16 +41,25 @@ export default class EditModuleFormByModal extends Component {
         // })
     }
 
+    componentWillReceiveProps(newProps) {
+        //将props传过来的值赋值给本地变量
+        if (JSON.stringify(newProps.editFormData) !== "{}") {
+            this.setState({
+                formData: newProps.editFormData,
+            })
+        }
+        
+    }
     /**
      * 当props的值改变时，调用此方法。同时setState()也会调用此方法。
      */
     componentDidUpdate(prevProps) {
-        // console.log("componentDidUpdate", prevProps)
-        if (!this.state.parentModuleList) {
-            this.setState({
-                parentModuleList: this.props.parentModuleList,
-            })
-        }
+        // console.log("prevProps", prevProps)
+        // if (!this.state.parentModuleList) {
+        //     this.setState({
+        //         parentModuleList: this.props.parentModuleList,
+        //     })
+        // }
 
         // this.state.formData = this.props.formData;
         // console.log("this.state.formData:", this.state.formData)
@@ -97,7 +105,8 @@ export default class EditModuleFormByModal extends Component {
      */
     treeSelectOnChange = (val) => {
         console.log(val);
-        let tempFormData = this.props.editFormData;
+        // let tempFormData = this.props.editFormData;
+        let tempFormData = this.state.formData;
         this.props.parentModuleList.map((item) => {
             if (item.id == val) {
                 tempFormData.parentShortname = item.shortName;
@@ -154,9 +163,10 @@ export default class EditModuleFormByModal extends Component {
         }).then((res) => {
             if (res.data.code === 0) {
                 message.success(res.data.msg);
-                console.log("customRequest", res.data.data);
+                let tempFormData = this.state.formData;
+                tempFormData.icon = res.data.data;
                 this.setState({
-                    imageUrl: res.data.data
+                    formData: tempFormData,
                 })
             } else {
                 message.error(res.data.msg);
@@ -174,9 +184,10 @@ export default class EditModuleFormByModal extends Component {
     handleOk = () => {
         this.state.validateList = [];//清空验证信息
         if (this.props.onOk) {
-            let tempFormData = this.props.editFormData;
-            tempFormData.icon = this.props.editFormData.icon;
-            tempFormData.type = this.props.editFormData.type;
+            let tempFormData = this.state.formData;
+            tempFormData.sort = tempFormData.sort == null ? "" : tempFormData.sort.toString();
+            tempFormData.icon = this.state.formData.icon;
+            tempFormData.type = this.state.formData.type;
             if (tempFormData.type == 0) {
                 if (!this.moduleValidate(tempFormData)) {
                     return;
@@ -191,7 +202,7 @@ export default class EditModuleFormByModal extends Component {
                     return;
                 }
                 tempFormData.messageType = null;
-            } else{
+            } else {
                 if (!this.otherValidate(tempFormData)) {
                     return;
                 }
@@ -240,17 +251,24 @@ export default class EditModuleFormByModal extends Component {
             }
             result = false;
         }
-        if (tempFormData.shortName === "") {
-            vd[3] = {
-                validateStatus: "error",
-                help: "请输入NC类型编码!"
-            }
-            result = false;
-        }
+        // if (tempFormData.shortName === "") {
+        //     vd[3] = {
+        //         validateStatus: "error",
+        //         help: "请输入模块编码编码!"
+        //     }
+        //     result = false;
+        // }
         if (tempFormData.themetext === "") {
             vd[6] = {
                 validateStatus: "error",
                 help: "请输入单据主题文字!"
+            }
+            result = false;
+        }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
             }
             result = false;
         }
@@ -287,7 +305,7 @@ export default class EditModuleFormByModal extends Component {
         if (tempFormData.shortName === "") {
             vd[3] = {
                 validateStatus: "error",
-                help: "请输入NC类型编码!"
+                help: "请输入模块编码编码!"
             }
             result = false;
         }
@@ -295,6 +313,13 @@ export default class EditModuleFormByModal extends Component {
             vd[4] = {
                 validateStatus: "error",
                 help: "请输入消息类型!"
+            }
+            result = false;
+        }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
             }
             result = false;
         }
@@ -309,7 +334,7 @@ export default class EditModuleFormByModal extends Component {
     /**
      * 基它类型的输入校验
      */
-    otherValidate = (tempFormData) =>{
+    otherValidate = (tempFormData) => {
         console.log("tempFormData", tempFormData);
         this.state.validateList = [];//清空验证信息
         let result = true;
@@ -325,6 +350,13 @@ export default class EditModuleFormByModal extends Component {
             vd[2] = {
                 validateStatus: "error",
                 help: "请上传图标!"
+            }
+            result = false;
+        }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
             }
             result = false;
         }
@@ -350,10 +382,9 @@ export default class EditModuleFormByModal extends Component {
      * 选择颜色
      */
     handleChangeColorComplete = (color) => {
-        let tempFormData = this.props.editFormData;
+        let tempFormData = this.state.formData;
         tempFormData.themecolor = color.hex
         this.setState({
-            defalutThemeColor: color.hex,
             formData: tempFormData,
         })
     }
@@ -373,7 +404,7 @@ export default class EditModuleFormByModal extends Component {
 
 
     render() {
-        const {validateList } = this.state;
+        const { validateList } = this.state;
         const uploadButton = (
             <div>
                 <Icon type={this.state.upFileLoading ? 'loading' : 'plus'} />
@@ -396,7 +427,7 @@ export default class EditModuleFormByModal extends Component {
                     <Form {...formItemLayout}>
                         <Form.Item label="类型">
                             <div>
-                                <RadioGroup value={this.props.editFormData.type} disabled={true}>
+                                <RadioGroup value={this.state.formData.type} disabled={true}>
                                     <Radio value={0}>模块</Radio>
                                     <Radio value={1}>单据</Radio>
                                     <Radio value={2}>其它</Radio>
@@ -406,13 +437,14 @@ export default class EditModuleFormByModal extends Component {
                         <Form.Item
                             label="名称"
                             {...validateList[0]}>
-                            <Input placeholder="请输入名称" onChange={(e) => {
-                                let tempFormData = this.props.editFormData;
+                            <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
+
+                                let tempFormData = this.state.formData;
                                 tempFormData.moduleName = e.target.value;
                                 this.setState({
                                     formData: tempFormData
                                 })
-                            }} value={this.props.editFormData.moduleName} />
+                            }} value={this.state.formData.moduleName} />
                         </Form.Item>
 
                         <Form.Item
@@ -421,8 +453,8 @@ export default class EditModuleFormByModal extends Component {
                             <div>
                                 <Select
                                     // defaultValue=""
-                                    value={this.props.editFormData.parentName}
-                                    disabled={this.props.editFormData.type == 0 || this.props.editFormData.type == 2}
+                                    value={this.state.formData.parentName}
+                                    disabled={this.state.formData.type == 0 || this.state.formData.type == 2}
                                     onChange={this.treeSelectOnChange}>
                                     {
                                         (this.props.parentModuleList) ?
@@ -447,45 +479,44 @@ export default class EditModuleFormByModal extends Component {
                                     className="avatar-uploader"
                                     showUploadList={false}
                                     customRequest={this.customRequest}
-                                    beforeUpload={this.beforeUpload}
-                                >
-                                    {this.props.editFormData.icon ? <img width="50" height="50" src={this.props.editFormData.icon} alt="avatar" /> : uploadButton}
+                                    beforeUpload={this.beforeUpload}>
+                                    {this.state.formData.icon ? <img width="50" height="50" src={this.state.formData.icon} alt="avatar" /> : uploadButton}
                                 </Upload>
                             </div>
                         </Form.Item>
                         <Form.Item
-                            label="NC类型"
+                            label="模块编码"
                             {...validateList[3]}>
-                            <Input placeholder="类型编码" disabled={this.props.editFormData.type == 2}
-                            onChange={(e) => {
-                                let tempFormData = this.props.editFormData;
-                                tempFormData.shortName = e.target.value;
-                                this.setState({
-                                    formData: tempFormData
-                                })
-                            }} value={this.props.editFormData.shortName} />
+                            <Input placeholder="模块编码" maxLength={32} disabled={this.state.formData.type !== 0}
+                                onChange={(e) => {
+                                    let tempFormData = this.state.formData;
+                                    tempFormData.shortName = e.target.value;
+                                    this.setState({
+                                        formData: tempFormData
+                                    })
+                                }} value={this.state.formData.shortName} />
                         </Form.Item>
                         <Form.Item
                             label="消息类型"
                             {...validateList[4]}>
-                            <Input placeholder="消息类型编码" disabled={this.props.editFormData.type == 1 || this.props.editFormData.type == 2}
+                            <Input placeholder="消息类型编码" maxLength={32} disabled={this.state.formData.type !== 0}
                                 onChange={(e) => {
-                                    let tempFormData = this.props.editFormData;
+                                    let tempFormData = this.state.formData;
                                     tempFormData.messageType = e.target.value;
                                     this.setState({
                                         formData: tempFormData
                                     })
-                                }} value={this.props.editFormData.messageType} />
+                                }} value={this.state.formData.messageType} />
                         </Form.Item>
                         <Form.Item
                             label="单据主题颜色">
                             <div>
                                 {
-                                    this.props.editFormData.type == 1 ? <CirclePicker
-                                        color={this.props.editFormData.themecolor}
+                                    this.state.formData.type == 1 ? <CirclePicker
+                                        color={this.state.formData.themecolor}
                                         onChangeComplete={this.handleChangeColorComplete}
-                                    />:
-                                    <Input placeholder="" disabled={this.props.editFormData.type == 0 || this.props.editFormData.type == 2} />
+                                    /> :
+                                        <Input placeholder="" disabled={this.state.formData.type !== 1} />
                                 }
 
                             </div>
@@ -494,27 +525,26 @@ export default class EditModuleFormByModal extends Component {
                             label="单据主题文字"
                             {...validateList[6]}>
 
-                            <Input placeholder="" disabled={this.props.editFormData.type ==0 || this.props.editFormData.type == 2} onChange={(e) => {
-                                let tempFormData = this.props.editFormData;
+                            <Input placeholder="" maxLength={4} disabled={this.state.formData.type !== 1} onChange={(e) => {
+                                let tempFormData = this.state.formData;
                                 tempFormData.themetext = e.target.value;
                                 this.setState({
                                     formData: tempFormData
                                 })
-                            }} value={this.props.editFormData.themetext} />
+                            }} value={this.state.formData.themetext} />
 
 
                         </Form.Item>
                         <Form.Item
-                            label="排序"
-                            validateStatus=""
-                            help="">
+                            {...validateList[7]}
+                            label="排序">
                             <InputNumber min={0} defaultValue={0} max={1000} onChange={(value) => {
-                                let tempFormData = this.props.editFormData;
+                                let tempFormData = this.state.formData;
                                 tempFormData.sort = value;
                                 this.setState({
                                     formData: tempFormData
                                 })
-                            }} value={this.props.editFormData.sort} />
+                            }} value={this.state.formData.sort} />
                         </Form.Item>
                     </Form>
                 </Spin>

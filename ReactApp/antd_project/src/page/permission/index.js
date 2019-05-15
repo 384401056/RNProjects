@@ -134,7 +134,6 @@ export default class Permission extends Component {
    * @param record 
    */
   deleteBtnClick = (record) => {
-    console.log(record);
     let _this = this;
     if (record.type == 0) {
       return (confirm({
@@ -147,7 +146,7 @@ export default class Permission extends Component {
           _this.deletePermission(record);
         },
         onCancel() {
-          console.log('Cancel');
+          // console.log('Cancel');
         },
       }))
     } else {

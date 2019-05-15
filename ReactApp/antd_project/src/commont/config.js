@@ -1,5 +1,6 @@
 global.constants = {
     url:'http://localhost:8080/manage',
+    default_password: "123456",
     checkPermission:(path)=>{
         let array = JSON.parse(sessionStorage.getItem("route"))
         if(!array || array.length === 0) 

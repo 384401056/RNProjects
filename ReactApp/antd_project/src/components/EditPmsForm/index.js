@@ -37,14 +37,22 @@ export default class EditPmsForm extends Component {
 
     }
 
+    componentWillReceiveProps(newProps) {
+        if (JSON.stringify(newProps.editFormData) !== "{}") {
+            this.setState({
+                formData: newProps.editFormData,
+            })
+        }
+    }
+
 
     componentDidUpdate(prevProps) {
 
-        if (!this.state.permissionParentList) {
-            this.setState({
-                permissionParentList: this.props.permissionParentList,
-            })
-        }
+        // if (!this.state.permissionParentList) {
+        //     this.setState({
+        //         permissionParentList: this.props.permissionParentList,
+        //     })
+        // }
 
         //清空上次输入的内容。
         if (!this.props.visible) {
@@ -59,7 +67,7 @@ export default class EditPmsForm extends Component {
     */
     treeSelectOnChange = (val) => {
         console.log(val);
-        let tempFormData = this.props.editFormData;
+        let tempFormData = this.state.formData;
         this.props.permissionParentList.map((item) => {
             if (item.id == val) {
                 tempFormData.parentId = item.id;
@@ -79,9 +87,10 @@ export default class EditPmsForm extends Component {
     handleOk = () => {
         this.state.validateList = [];//清空验证信息
         if (this.props.onOk) {
-            let tempFormData = this.props.editFormData;
-            tempFormData.sort = this.props.editFormData.sort.toString();
-            tempFormData.type = this.props.editFormData.type;
+            let tempFormData = this.state.formData;
+            // tempFormData.sort = this.state.formData.sort.toString();
+            tempFormData.sort = tempFormData.sort == null ? "" : tempFormData.sort.toString();
+            tempFormData.type = this.state.formData.type;
             console.log("tempFormData", tempFormData)
             if (tempFormData.type == 0) {
                 if (!this.dirValidate(tempFormData)) {
@@ -98,7 +107,7 @@ export default class EditPmsForm extends Component {
             //     formData: tempFormData,
             // },
             //     () => {
-            //         this.props.onOk(this.props.editFormData);
+            //         this.props.onOk(this.state.formData);
             //     }
             // )
             this.props.onOk(tempFormData);
@@ -206,7 +215,7 @@ export default class EditPmsForm extends Component {
                     <Form {...formItemLayout}>
                         <Form.Item label="类型">
                             <div>
-                                <RadioGroup value={this.props.editFormData.type} disabled={true}>
+                                <RadioGroup value={this.state.formData.type} disabled={true}>
                                     <Radio value={0}>目录</Radio>
                                     <Radio value={1}>菜单</Radio>
                                 </RadioGroup>
@@ -216,13 +225,14 @@ export default class EditPmsForm extends Component {
                         <Form.Item
                             label="名称"
                             {...validateList[0]}>
-                            <Input placeholder="请输入名称" onChange={(e) => {
-                                let tempFormData = this.props.editFormData;
+                            <Input placeholder="请输入名称" maxLength={32}
+                                onChange={(e) => {
+                                let tempFormData = this.state.formData;
                                 tempFormData.name = e.target.value;
                                 this.setState({
                                     formData: tempFormData
                                 })
-                            }} value={this.props.editFormData.name} />
+                            }} value={this.state.formData.name} />
                         </Form.Item>
 
 
@@ -232,8 +242,8 @@ export default class EditPmsForm extends Component {
                             <div>
                                 <Select
                                     // defaultValue=""
-                                    value={this.props.editFormData.parentName}
-                                    disabled={this.props.editFormData.type == 0}
+                                    value={this.state.formData.parentName}
+                                    disabled={this.state.formData.type == 0}
                                     onChange={this.treeSelectOnChange}>
                                     {
                                         (this.props.permissionParentList) ?
@@ -251,27 +261,30 @@ export default class EditPmsForm extends Component {
                             label="路由地址"
                             {...validateList[2]}>
                             <Input placeholder="以'/'开头"
-                                disabled={this.props.editFormData.type == 0 && (this.props.editFormData.url == null || this.props.editFormData.url == "")}
+                                maxLength={32}
+                                disabled={this.state.formData.type == 0 && (this.state.formData.url == null || this.state.formData.url == "")}
                                 onChange={(e) => {
-                                    let tempFormData = this.props.editFormData;
+                                    let tempFormData = this.state.formData;
                                     tempFormData.url = e.target.value;
                                     this.setState({
                                         formData: tempFormData
                                     })
-                                }} value={this.props.editFormData.url} />
+                                }} value={this.state.formData.url} />
                         </Form.Item>
 
                         <Form.Item
                             label="图标名称"
                             {...validateList[3]}>
-                            <Input placeholder="https://ant.design/中的图标名" disabled={this.props.editFormData.type == 1}
+                            <Input placeholder="https://ant.design/中的图标名"
+                                maxLength={32}
+                                disabled={this.state.formData.type == 1}
                                 onChange={(e) => {
-                                    let tempFormData = this.props.editFormData;
+                                    let tempFormData = this.state.formData;
                                     tempFormData.icon = e.target.value;
                                     this.setState({
                                         formData: tempFormData
                                     })
-                                }} value={this.props.editFormData.icon} />
+                                }} value={this.state.formData.icon} />
                         </Form.Item>
 
                         <Form.Item
@@ -280,13 +293,13 @@ export default class EditPmsForm extends Component {
                             help="">
                             <InputNumber min={0} defaultValue={0} max={1000}
                                 onChange={(value) => {
-                                let tempFormData = this.props.editFormData;
+                                let tempFormData = this.state.formData;
                                 console.log("value:", value);
                                 tempFormData.sort = value;
                                 this.setState({
                                     formData: tempFormData
                                 })
-                            }} value={this.props.editFormData.sort} />
+                            }} value={this.state.formData.sort} />
                         </Form.Item>
                     </Form>
                 </Spin>

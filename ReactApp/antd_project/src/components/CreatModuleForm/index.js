@@ -182,7 +182,7 @@ export default class CreateModuleFormByModal extends Component {
         this.state.validateList = [];//清空验证信息
         if (this.props.onOk) {
             let tempFormData = this.state.formData;
-            tempFormData.sort = tempFormData.sort.toString();
+            tempFormData.sort = this.state.formData.sort==null?"":tempFormData.sort.toString();
             tempFormData.icon = this.state.imageUrl;
             tempFormData.type = this.state.moduleType.toString();
             if (tempFormData.type == 0) {
@@ -248,17 +248,24 @@ export default class CreateModuleFormByModal extends Component {
             }
             result = false;
         }
-        if (tempFormData.shortName === "") {
-            vd[3] = {
-                validateStatus: "error",
-                help: "请输入NC类型编码!"
-            }
-            result = false;
-        }
+        // if (tempFormData.shortName === "") {
+        //     vd[3] = {
+        //         validateStatus: "error",
+        //         help: "请输入模块编码编码!"
+        //     }
+        //     result = false;
+        // }
         if (tempFormData.themetext === "") {
             vd[6] = {
                 validateStatus: "error",
                 help: "请输入单据主题文字!"
+            }
+            result = false;
+        }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
             }
             result = false;
         }
@@ -294,7 +301,7 @@ export default class CreateModuleFormByModal extends Component {
         if (tempFormData.shortName === "") {
             vd[3] = {
                 validateStatus: "error",
-                help: "请输入NC类型编码!"
+                help: "请输入模块编码编码!"
             }
             result = false;
         }
@@ -302,6 +309,13 @@ export default class CreateModuleFormByModal extends Component {
             vd[4] = {
                 validateStatus: "error",
                 help: "请输入消息类型!"
+            }
+            result = false;
+        }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
             }
             result = false;
         }
@@ -334,6 +348,14 @@ export default class CreateModuleFormByModal extends Component {
             }
             result = false;
         }
+        if (tempFormData.sort === "") {
+            vd[7] = {
+                validateStatus: "error",
+                help: "请输入序号!"
+            }
+            result = false;
+        }
+
         this.setState({
             validateList: vd,
         })
@@ -374,7 +396,6 @@ export default class CreateModuleFormByModal extends Component {
     // }
 
 
-
     render() {
         const { imageUrl, validateList } = this.state;
         const { parentModuleList } = this.props;
@@ -395,8 +416,7 @@ export default class CreateModuleFormByModal extends Component {
                 footer={[
                     <Button key="back" onClick={this.handleCancel}>取消</Button>,
                     <Button key="submit" type="primary" onClick={this.handleOk}>保存</Button>,
-                ]}
-            >
+                ]}>
                 <Spin spinning={this.props.loading}>
                     <Form {...formItemLayout}>
                         <Form.Item label="类型">
@@ -416,11 +436,10 @@ export default class CreateModuleFormByModal extends Component {
                                 </RadioGroup>
                             </div>
                         </Form.Item>
-                        <Form.Item
-                            label="名称"
-                            {...validateList[0]}
+                        <Form.Item label="名称" {...validateList[0]}
                         >
-                            <Input placeholder="请输入名称" onChange={(e) => {
+                            <Input placeholder="请输入名称" maxLength={32}
+                                 onChange={(e) => {
                                 let tempFormData = this.state.formData;
                                 tempFormData.moduleName = e.target.value;
                                 this.setState({
@@ -453,8 +472,7 @@ export default class CreateModuleFormByModal extends Component {
 
                         <Form.Item
                             label="上传图标"
-                            {...validateList[2]}
-                        >
+                            {...validateList[2]}>
                             <div>
                                 <Upload
                                     name="avatar"
@@ -469,9 +487,9 @@ export default class CreateModuleFormByModal extends Component {
                             </div>
                         </Form.Item>
                         <Form.Item
-                            label="NC类型"
+                            label="模块编码"
                             {...validateList[3]}>
-                            <Input placeholder="类型编码" disabled={this.state.moduleType == 2}
+                            <Input placeholder="模块编码" maxLength={32} disabled={this.state.moduleType !== 0 }
                              onChange={(e) => {
                                 let tempFormData = this.state.formData;
                                 tempFormData.shortName = e.target.value;
@@ -483,7 +501,7 @@ export default class CreateModuleFormByModal extends Component {
                         <Form.Item
                             label="消息类型"
                             {...validateList[4]}>
-                            <Input placeholder="消息类型编码" disabled={this.state.moduleType == 1 || this.state.moduleType == 2}
+                            <Input placeholder="消息类型编码" maxLength={32} disabled={this.state.moduleType !== 0}
                                 onChange={(e) => {
                                     let tempFormData = this.state.formData;
                                     tempFormData.messageType = e.target.value;
@@ -500,16 +518,16 @@ export default class CreateModuleFormByModal extends Component {
                                         color={this.state.defalutThemeColor}
                                         onChangeComplete={this.handleChangeColorComplete}
                                     /> :
-                                        <Input placeholder="" disabled={this.state.moduleType == 0 || this.state.moduleType == 2} />
+                                        <Input placeholder="" disabled={this.state.moduleType !== 1} />
                                 }
-
                             </div>
                         </Form.Item>
                         <Form.Item
                             label="单据主题文字"
                             {...validateList[6]}>
 
-                            <Input placeholder="" disabled={this.state.moduleType == 0 || this.state.moduleType == 2} onChange={(e) => {
+                            <Input placeholder="" maxLength={4}
+                                disabled={this.state.moduleType !== 1} onChange={(e) => {
                                 let tempFormData = this.state.formData;
                                 tempFormData.themetext = e.target.value;
                                 this.setState({
@@ -521,8 +539,8 @@ export default class CreateModuleFormByModal extends Component {
                         </Form.Item>
                         <Form.Item
                             label="排序"
-                            validateStatus=""
-                            help="">
+                            {...validateList[7]}
+                            >
                             <InputNumber min={0} defaultValue={0} max={1000} onChange={(value) => {
                                 let tempFormData = this.state.formData;
                                 console.log("value:", value);
