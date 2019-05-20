@@ -9,7 +9,7 @@ import axios from 'axios'
 import md5 from 'md5'
 import ImageCode from '../ImageCode';
 import '../../commont/config'
-import {withRouter} from "react-router-dom";
+import { withRouter } from "react-router-dom";
 
 class LoginForm extends Component {
 
@@ -67,7 +67,7 @@ class LoginForm extends Component {
         });
     }
 
-    imageCodeOnMatch=()=>{
+    imageCodeOnMatch = () => {
         //发送post请求。
         let fd = new FormData();
         fd.append('userName', this.state.formValue.userName);
@@ -90,15 +90,15 @@ class LoginForm extends Component {
             } else {
                 message.error(res.data.msg);
                 this.setState({
-                    codeStatus:false,
+                    codeStatus: false,
                 })
             }
-        }).catch((err)=>{
+        }).catch((err) => {
             console.log(err)
-                this.setState({
-                    codeStatus:false,
-                })
-                message.error("登录失败,请检查网络配置!");
+            this.setState({
+                codeStatus: false,
+            })
+            message.error("登录失败,请检查网络配置!");
         });
     }
 
@@ -115,32 +115,32 @@ class LoginForm extends Component {
                     />
                 </div>
                 :
-                <div className = "login-formclass">
+                <div className="login-formclass">
                     <div className="login-title">
                         <div>若邻云后台管理系统</div>
                     </div>
                     <Form onSubmit={this.handleSubmit} className="login-form">
-                    <Form.Item>
-                        {getFieldDecorator('userName', {
-                            rules: [{ required: true, message: '请输入用户名!' }],
-                        })(
-                            <Input ref={(input) => { this.accoutInput = input.value; }} maxLength={16}
-                            prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
-                        )}
-                    </Form.Item>
-                    <Form.Item>
-                        {getFieldDecorator('password', {
-                            rules: [{ required: true, message: '新输入密码!' }],
-                        })(
-                            <Input ref={(input) => { this.passwordInput = input.value; }} maxLength={16}
-                            prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
-                        )}
-                    </Form.Item>
-                    <Form.Item>
-                        <Button type="primary" htmlType="submit" className="login-form-button">
-                            登录
+                        <Form.Item>
+                            {getFieldDecorator('userName', {
+                                rules: [{ required: true, message: '请输入用户名!' }],
+                            })(
+                                <Input ref={(input) => { this.accoutInput = input.value; }} maxLength={16}
+                                    prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="用户名" />
+                            )}
+                        </Form.Item>
+                        <Form.Item>
+                            {getFieldDecorator('password', {
+                                rules: [{ required: true, message: '新输入密码!' }],
+                            })(
+                                <Input ref={(input) => { this.passwordInput = input.value; }} maxLength={16}
+                                    prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="密码" />
+                            )}
+                        </Form.Item>
+                        <Form.Item>
+                            <Button type="primary" htmlType="submit" className="login-form-button">
+                                登录
                         </Button>
-                    </Form.Item>
+                        </Form.Item>
                     </Form>
                 </div>
         )

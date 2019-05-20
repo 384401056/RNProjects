@@ -2,9 +2,12 @@ import React, { Component } from 'react'
 import './index.less';
 import {
     Row, Col, Button, Table, Modal, Tree, Input,
-    Tabs, Upload, Icon, message,
+    Tabs, Tag, Spin, message,
 } from 'antd';
+import axios from 'axios'
 import '../../commont/config'
+import CreateCompRoleForm from '../../components/CreateCompRoleForm'
+import EditCompRoleForm from '../../components/EditCompRoleForm'
 
 const confirm = Modal.confirm;
 const { TreeNode } = Tree;
@@ -15,33 +18,32 @@ export default class CompRole extends Component {
         super(props);
 
         this.state = {
+            pageInfo: {
+                defaultCurrent: 1,
+                currentPage: 0,
+                pageSize: 0,
+                total: 0
+            },
+            //此用户下被分配的全模块列表
+            userModuleList: [],
+            userInfo: {},
             hasAuth: false,
             createVisible: false,
-            confirmLoading: false,
+            createLoading: false,
+            editVisible: false,
+            editLoading: false,
             authVisible: false,
-            data: [
-                {
-                    key: 1,
-                    name: '报销管理',
-                    age: 'BX',
-                    address: '有此权限的企业可进行报销'
-                },
-                {
-                    key: 2,
-                    name: '人力资源管理',
-                    age: 'HR',
-                    address: '有此权限的企业可进行人力资源操作'
-                },
-                {
-                    key: 3,
-                    name: '供应链管理',
-                    age: 'LINK',
-                    address: '有此权限的企业可进行供应链管理'
-                }
-            ],
+            data: [],
+            formData: {
+                name: "",
+                userId: "",
+                moduleIds:[],
+                //选择的权限id列表
+                moduleList: []
+            },
             columns: [{
                 title: 'ID',
-                dataIndex: 'key',
+                dataIndex: 'id',
                 width: '5%',
                 key: 'id',
                 align: 'center',
@@ -51,23 +53,33 @@ export default class CompRole extends Component {
                 key: 'name',
                 width: '10%',
                 align: 'center',
-            }, {
-                title: '角色标识',
-                dataIndex: 'age',
-                width: '10%',
-                key: 'age',
-                align: 'center',
             },
             {
-                title: '描述信息',
-                dataIndex: 'address',
-                width: '10%',
-                key: 'address',
+                title: '模块列表',
+                dataIndex: 'moduleList',
+                width: '20%',
+                key: 'moduleList',
+                align: 'center',
+                render: (text, record) => {
+                    return (
+                        record.moduleList.map((item) => (
+                            (item.type == 0) ?
+                                <Tag color="blue" key={item.id}>{item.moduleName}</Tag>
+                                : <Tag color="green" key={item.id}>{item.moduleName}</Tag>
+                        ))
+                    )
+                }
+            },
+            {
+                title: '创建时间',
+                dataIndex: 'createTime',
+                key: 'createTime',
+                width: '20%',
                 align: 'center',
             },
             {
                 title: "操作",
-                width: '15%',
+                width: '20%',
                 key: "",
                 align: 'center',
                 render: (text, record) => {
@@ -75,7 +87,7 @@ export default class CompRole extends Component {
                         <div>
                             <Button className="cr_editBtn" onClick={this.editBtnClick.bind(this, record)} >修改</Button>
                             <Button className="cr_editBtn" type="danger" onClick={this.deleteBtnClick.bind(this, record)}>删除</Button>
-                            <Button type="primary" onClick={this.authBtnClick.bind(this, record)}>授权</Button>
+                            {/* <Button type="primary" onClick={this.authBtnClick.bind(this, record)}>授权</Button> */}
                         </div>
                     );
                 },
@@ -84,16 +96,31 @@ export default class CompRole extends Component {
         }
     }
 
+    componentDidMount() {
+        console.log("componentDidMount")
+        this.setState({
+            //根据当前用户是否有访问此组件的权限
+            hasAuth: global.constants.checkPermission("/company/role"),
+        });
+        this.state.userInfo = JSON.parse(sessionStorage.getItem("userInfo"));
+        console.log(this.state.userInfo.id);
+        this.getCompRoleList(this.state.userInfo.id, this.state.pageInfo.defaultCurrent);
+        //这个方法需要的是json所以不用转成对象。
+        this.getUserModuleList(sessionStorage.getItem("userInfo"))
+    }
+
+    pageOnChange = (pageNum, pageSize) => {
+        this.getCompRoleList(this.state.userInfo.id, pageNum);
+      }
+
 
     /**
      * 编辑按钮
-     * @param {} record 
      */
     editBtnClick(record) {
-        console.log("编辑")
-        console.log(record);
         this.setState({
-            createVisible: true,
+            editVisible: true,
+            formData: JSON.parse(JSON.stringify(record))//深拷贝
         });
     }
 
@@ -102,6 +129,7 @@ export default class CompRole extends Component {
      * @param {*} record 
      */
     deleteBtnClick(record) {
+        let _this = this;
         return (confirm({
             title: '你确定要删除这个角色吗?',
             content: '',
@@ -109,18 +137,14 @@ export default class CompRole extends Component {
             cancelText: '取消',
             okType: 'danger',
             onOk() {
-                return new Promise((resolve, reject) => {
-                    setTimeout(Math.random() > 0.5 ? resolve : reject, 1000);
-                }).catch(() => console.log('Oops errors!')).then(() => {
-                    message.success('删除角色成功。');
-                })
+                _this.roleAction(record, 3);
             },
             onCancel() {
                 console.log('Cancel');
             },
         }))
     }
-    
+
     /**
      * 授权按钮
      * @param {*} record 
@@ -131,19 +155,154 @@ export default class CompRole extends Component {
         });
     }
 
-
-
-
-    createHandleOk = () => {
-        this.setState({ confirmLoading: true });
-        setTimeout(() => {
-            this.setState({ confirmLoading: false, createVisible: false });
-            message.success('添加角色成功。');
-        }, 3000);
+    /**
+     * 获取当前用户被分配的模块权限
+     */
+    getUserModuleList = (userInfo) => {
+        this.setState({ loading: true, })
+        let fd = new FormData();
+        fd.append('userJson', userInfo);
+        //发送post请求。
+        axios({
+            method: 'post',
+            url: global.constants.url + '/user/moduleList',
+            data: fd,
+            headers: {
+                'accessToken': JSON.parse(sessionStorage.getItem("token")),
+                'Content-Type': 'application/json;charset=UTF-8',
+            }
+        }).then((res) => {
+            if (res.data.code === 0) {
+                console.log("getUserModuleList", res.data.data);
+                this.setState({
+                    userModuleList: res.data.data,
+                })
+            }
+            this.setState({ loading: false, })
+        }).catch((err) => {
+            console.log(err)
+            message.error("获取数据失败,请检查网络配置!");
+            this.setState({ loading: false, })
+        });
     }
 
-    createHandleCancel = () => {
-        this.setState({ createVisible: false });
+    /**
+     * 获取企业角色列表
+     */
+    getCompRoleList = (userId, pageNum) => {
+        console.log("getCompRoleList")
+        this.setState({ loading: true, })
+        let fd = new FormData();
+        fd.append('userId', userId);
+        fd.append('pageindex', pageNum);
+        //发送post请求。
+        axios({
+            method: 'post',
+            url: global.constants.url + '/compRole/list',
+            data: fd,
+            headers: {
+                'accessToken': JSON.parse(sessionStorage.getItem("token")),
+                'Content-Type': 'application/json;charset=UTF-8',
+            }
+        }).then((res) => {
+            if (res.data.code === 0) {
+                // message.success(res.data.msg);
+                //返回的分页信息和数据
+                let tempPageInfo = this.state.pageInfo;
+                tempPageInfo.currentPage = res.data.data.pageNum;
+                tempPageInfo.pageSize = res.data.data.pageSize;
+                tempPageInfo.total = res.data.data.total;
+                console.log("getCompRoleList", res.data.data.list);
+                this.setState({
+                    pageInfo: tempPageInfo,
+                    data: res.data.data.list,
+                })
+            } else {
+                message.error(res.data.msg);
+            }
+            this.setState({ loading: false, })
+        }).catch((err) => {
+            console.log(err)
+            message.error("获取数据失败,请检查网络配置!");
+            this.setState({ loading: false, })
+        });
+    }
+
+
+
+    /**
+     * 创建角色提交按钮
+     */
+    createHandleOk = (data) => {
+        console.log("data:", data);
+        this.setState({ createLoading: true });
+        this.roleAction(data, 1);
+    }
+
+    /**
+     * 编辑角色提交按钮
+     */
+    editHandleOk = (data) => {
+        console.log("editHandleOk data:", data);
+        this.setState({ editLoading: true });
+        this.roleAction(data, 2);
+    }
+
+    modalHandleCancel = () => {
+        this.setState({ 
+            createVisible: false,
+            editVisible: false,
+        });
+    }
+
+
+
+    /**
+ * 用户操作
+ */
+    roleAction = (data, actionType) => {
+        let fd = new FormData();
+        fd.append('roleJson', JSON.stringify(data));
+        fd.append('action', actionType);
+        this.request("/compRole/action", fd);
+    }
+
+    /**
+  * 发送网络请求
+  */
+    request = (url, data) => {
+        axios({
+            method: 'post',
+            url: global.constants.url + url,
+            data: data,
+            headers: {
+                'accessToken': JSON.parse(sessionStorage.getItem("token")),
+                'Content-Type': 'application/json;charset=UTF-8',
+            }
+        }).then((res) => {
+            if (res.data.code === 0) {
+                message.success(res.data.msg);
+                //更新列表
+                this.getCompRoleList(this.state.userInfo.id, this.state.pageInfo.defaultCurrent);
+                this.setState({
+                    createVisible: false,
+                    editVisible: false,
+                });
+            } else {
+                message.error(res.data.msg);
+            }
+            this.setState({
+                createLoading: false,
+                editLoading: false,
+            });
+        }).catch((err) => {
+            console.log(err)
+            message.error("获取数据失败,请检查网络配置!");
+            this.setState({
+                createVisible: false,
+                editVisible: false,
+            });
+        });
     }
 
 
@@ -156,17 +315,12 @@ export default class CompRole extends Component {
         });
     }
 
-    componentDidMount() {
-        this.setState({
-            hasAuth: global.constants.checkPermission("/company/role"),
-        })
-    }
 
     //授权窗口“确定”按钮事件
     authHandleOk = () => {
-        this.setState({ confirmLoading: true });
+        this.setState({ createLoading: true });
         setTimeout(() => {
-            this.setState({ confirmLoading: false, authVisible: false });
+            this.setState({ createLoading: false, authVisible: false });
             message.success('角色授权成功。');
         }, 3000);
     }
@@ -188,7 +342,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" maxLength={32}/>
+                            <Input placeholder="" maxLength={32} />
                         </div>
                     </Col>
                 </Row>
@@ -200,7 +354,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" maxLength={32}/>
+                            <Input placeholder="" maxLength={32} />
                         </div>
                     </Col>
                 </Row>
@@ -212,7 +366,7 @@ export default class CompRole extends Component {
                     </Col>
                     <Col span={12}>
                         <div>
-                            <Input placeholder="" maxLength={32}/>
+                            <Input placeholder="" maxLength={32} />
                         </div>
                     </Col>
                 </Row>
@@ -221,37 +375,8 @@ export default class CompRole extends Component {
     }
 
 
-    //授权角色模态框，中的内容
-    authModalView = () => {
-        return (
-            <div>
-                <Row className="cr_modalRow">
-                    <Col span={24}>
-                        <Tree
-                            checkable
-                            onSelect={this.onSelect}
-                            onCheck={this.onCheck}>
-                            <TreeNode title="报销模块" key="0-1">
-                                <TreeNode title="通用报销单" key="0-0-0"></TreeNode>
-                                <TreeNode title="差旅报销单" key="0-0-1"></TreeNode>
-                                <TreeNode title="招待报销单" key="0-0-2"></TreeNode>
-                            </TreeNode>
-                            <TreeNode title="付款模块" key="0-2">
-                                <TreeNode title="付款结算" key="2-0-0"></TreeNode>
-                            </TreeNode>
-                            <TreeNode title="借款模块" key="0-3">
-                                <TreeNode title="借款单" key="3-0-0"></TreeNode>
-                            </TreeNode>
-                        </Tree>
-                    </Col>
-                </Row>
-            </div>
-        )
-    }
-
-
     render() {
-        const { createVisible, confirmLoading, hasAuth, authVisible } = this.state;
+        const { createVisible, createLoading, hasAuth, authVisible , editVisible, editLoading} = this.state;
 
         if (hasAuth) {
             return (
@@ -261,37 +386,43 @@ export default class CompRole extends Component {
                         <Button type="primary" onClick={this.createBtnClick}>创建角色</Button>
 
                         {/* 创建角色的modal窗口 */}
-                        <Modal
+                        <CreateCompRoleForm
+                            userModuleList={this.state.userModuleList}
                             visible={createVisible}
-                            title="创建角色"
+                            loading={createLoading}
+                            userInfo={this.state.userInfo}
                             onOk={this.createHandleOk}
-                            onCancel={this.createHandleCancel}
-                            footer={[
-                                <Button key="back" onClick={this.createHandleCancel}>取消</Button>,
-                                <Button key="submit" type="primary" loading={confirmLoading} onClick={this.createHandleOk}>保存</Button>,
-                            ]}>
-                            {this.createRoleModalView()}
-                        </Modal>
+                            onCancel={this.modalHandleCancel}
+                        />
 
-                        <Modal
-                            visible={authVisible}
-                            title="角色授权"
-                            onOk={this.authHandleOk}
-                            onCancel={this.authHandleCancel}
-                            footer={[
-                                <Button key="back" onClick={this.authHandleCancel}>取消</Button>,
-                                <Button key="submit" type="primary" loading={confirmLoading} onClick={this.authHandleOk}>保存</Button>,
-                            ]}>
-                            {this.authModalView()}
-                        </Modal>
+                        {/* 编辑角色的modal窗口 */}
+                        <EditCompRoleForm
+                            userModuleList={this.state.userModuleList}
+                            visible={editVisible}
+                            loading={editLoading}
+                            userInfo={this.state.userInfo}
+                            onOk={this.editHandleOk}
+                            onCancel={this.modalHandleCancel}
+                            data = {this.state.formData}
+                        />
                     </Row>
 
                     {/* 模块列表 */}
                     <Row className="cr_tab">
-                        <Table
-                            columns={this.state.columns}
-                            dataSource={this.state.data}
-                            pagination={{ pageSize: 10 }} />
+                        <Spin spinning={this.state.loading}>
+                            <Table
+                                rowKey={record => record.id}
+                                columns={this.state.columns}
+                                dataSource={this.state.data}
+                                pagination={{
+                                    defaultCurrent: this.state.pageInfo.defaultCurrent,
+                                    onChange: this.pageOnChange,
+                                    current: this.state.pageInfo.currentPage,
+                                    pageSize: this.state.pageInfo.pageSize,
+                                    total: this.state.pageInfo.total,
+                                }}
+                            />
+                        </Spin>
                     </Row>
 
                 </div>

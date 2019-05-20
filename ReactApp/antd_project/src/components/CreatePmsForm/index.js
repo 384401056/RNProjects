@@ -105,12 +105,10 @@ export default class CreatePmsForm extends Component {
      */
     handleOk = () => {
         this.state.validateList = [];//清空验证信息
-        console.log("CreatePmsForm handleOk");
         if (this.props.onOk) {
             let tempFormData = this.state.formData;
             tempFormData.sort = tempFormData.sort.toString();
             tempFormData.type = this.state.pmsType.toString();
-            console.log("tempFormData", tempFormData)
             if (tempFormData.type == 0) {
                 if (!this.dirValidate(tempFormData)) {
                     return;

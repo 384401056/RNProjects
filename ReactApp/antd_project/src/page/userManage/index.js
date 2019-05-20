@@ -137,6 +137,9 @@ export default class UserAuth extends Component {
     this.getRoleListNoPage();
   }
 
+  pageOnChange = (pageNum, pageSize) => {
+    this.getUserList(pageNum);
+  }
 
   /**
    * 获取用户列表
@@ -320,14 +323,14 @@ export default class UserAuth extends Component {
               'Content-Type': 'application/json;charset=UTF-8',
             }
           }).then((res) => {
-            console.log("resetPwd",res.data);
+            console.log("resetPwd", res.data);
             if (res.data.code === 0) {
               message.success(res.data.msg);
             } else {
               message.error(res.data.msg);
             }
             resolve();
-            
+
           })
         }).catch((err) => {
           console.log(err)

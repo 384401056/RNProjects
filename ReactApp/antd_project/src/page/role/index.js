@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import './index.less';
 import '../../commont/config'
 import {
-    Row, Button, Table, Modal,Tag, Spin, message,
+    Row, Button, Table, Modal, Tag, Spin, message,
 } from 'antd';
 import axios from 'axios'
 import CreateRoleForm from '../../components/CreateRoleForm'
@@ -103,6 +103,11 @@ export default class Role extends Component {
     }
 
 
+    pageOnChange = (pageNum, pageSize) => {
+        this.getRoleList(pageNum);
+    }
+
+
 
     /**
      * 获取不分页的权限列表
@@ -161,7 +166,7 @@ export default class Role extends Component {
                 tempPageInfo.currentPage = res.data.data.pageNum;
                 tempPageInfo.pageSize = res.data.data.pageSize;
                 tempPageInfo.total = res.data.data.total;
-                console.log("getRoleList",res.data.data.list);
+                console.log("getRoleList", res.data.data.list);
                 this.setState({
                     pageInfo: tempPageInfo,
                     data: res.data.data.list,
@@ -193,9 +198,9 @@ export default class Role extends Component {
         this.roleAction(formData, 2);
     }
 
-        /**
-     * 模态框中的取消按钮事件
-     */
+    /**
+ * 模态框中的取消按钮事件
+ */
     modalHandleCancel = () => {
         this.setState({
             createVisible: false,
@@ -323,7 +328,7 @@ export default class Role extends Component {
                             visible={this.state.createVisible}
                             loading={this.state.confirmLoading}
                             onOk={this.createHandleOk}
-                            onCancel={this.modalHandleCancel}/>
+                            onCancel={this.modalHandleCancel} />
 
                         <EditRoleForm
                             permissionList={this.state.permissionList}
@@ -331,8 +336,8 @@ export default class Role extends Component {
                             visible={this.state.editVisible}
                             loading={this.state.editLoading}
                             onOk={this.editHandleOk}
-                            onCancel={this.modalHandleCancel}/>
-                            
+                            onCancel={this.modalHandleCancel} />
+
                     </Row>
 
                     {/* 模块列表 */}

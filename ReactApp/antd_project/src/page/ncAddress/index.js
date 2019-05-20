@@ -80,6 +80,11 @@ export default class NcAddress extends Component {
     this.getNcAddressList(this.state.pageInfo.defaultCurrent);
   }
 
+  pageOnChange = (pageNum, pageSize) => {
+    this.getNcAddressList(pageNum);
+  }
+
+
 
   getNcAddressList = (pageNum) => {
     this.setState({ loading: true, })

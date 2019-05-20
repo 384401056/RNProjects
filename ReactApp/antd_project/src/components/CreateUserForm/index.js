@@ -114,12 +114,12 @@ export default class CreateUserForm extends Component {
         this.state.validateList = [];//清空验证信息
         if (this.props.onOk) {
             let tempFormData = this.state.formData;
-            //合并子节点和父节点
-            tempFormData.moduleIds = tempFormData.moduleIds.concat(this.state.halfCheckedKeys);
-            tempFormData.password = global.constants.default_password;
             if (!this.userValidate(this.state.formData)) {
                 return;
             }
+            //合并子节点和父节点
+            tempFormData.moduleIds = tempFormData.moduleIds.concat(this.state.halfCheckedKeys);
+            tempFormData.password = global.constants.default_password;
             this.props.onOk(this.state.formData)
         }
     }

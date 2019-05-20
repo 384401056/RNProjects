@@ -1,8 +1,7 @@
 import React, { Component } from 'react'
 import './index.less';
 import {
-    Row, Form, Button, Modal, Radio, Input, Col,
-    Tree, Spin, Upload, Icon, message, InputNumber, Select
+    Row, Form, Modal, Input, Col, Tree, Spin,
 } from 'antd'
 import axios from 'axios'
 
@@ -18,25 +17,27 @@ const formItemLayout = {
     },
 };
 
-export default class CreateRoleForm extends Component {
+export default class CreateCompRoleForm extends Component {
 
     constructor(props) {
         super(props)
         this.state = {
-            editStatus: false,
             loading: false,
-            //系统的所有权限
-            permissionList: null,
+            //当前用户的所有权限
+            userModuleList: null,
+            visible: false,
+            loading: false,
             //表单验证
             validateList: [],
             //选中的父节点
             halfCheckedKeys:[],
+            userInfo:[],
             formData: {
                 name: "",
-                remark: "",
-                perms: "",
+                userId: "",
+                moduleIds:[],
                 //选择的权限id列表
-                permissionIds: []
+                moduleList: []
             }
         }
     }
@@ -45,13 +46,23 @@ export default class CreateRoleForm extends Component {
 
     }
 
+
+    componentWillReceiveProps(newProps){
+        console.log("newPorps:", newProps);
+        this.setState({
+            userModuleList: newProps.userModuleList,
+            visible: newProps.visible,
+            loading: newProps.loading,
+            userInfo: newProps.userInfo,
+        })
+    }
+
     /**
      * 当props的值改变时，调用此方法。同时setState()也会调用此方法。
      */
     componentDidUpdate(prevProps) {
-
         //清空上次输入的内容。
-        if (!this.props.visible) {
+        if (!this.state.visible) {
             this.clearFormData();
             this.state.validateList = [];//清空验证信息
         }
@@ -64,9 +75,8 @@ export default class CreateRoleForm extends Component {
     clearFormData = () => {
         this.state.formData = {
             name: "",
-            remark: "",
-            perms: "",
-            permissionIds: []
+            //选择的权限id列表
+            moduleList: [],
         }
     }
 
@@ -80,9 +90,10 @@ export default class CreateRoleForm extends Component {
             if (!this.roleValidate(this.state.formData)) {
                 return;
             }
-            //将父节点加入 选中的permissionIds 
-            tempFormData.permissionIds = tempFormData.permissionIds.concat(this.state.halfCheckedKeys)
-            this.props.onOk(this.state.formData)
+            // //将父节点加入 选中的permissionIds 
+            tempFormData.moduleIds = tempFormData.moduleIds.concat(this.state.halfCheckedKeys);
+            tempFormData.userId = this.state.userInfo.id;//设置用户id
+            this.props.onOk(tempFormData)
         }
     }
 
@@ -100,15 +111,8 @@ export default class CreateRoleForm extends Component {
             }
             result = false;
         }
-        if (tempFormData.perms === "") {
+        if (tempFormData.moduleIds === undefined || tempFormData.moduleIds.length == 0) {
             vd[1] = {
-                validateStatus: "error",
-                help: "请输入角色标识"
-            }
-            result = false;
-        }
-        if (tempFormData.permissionIds === undefined || tempFormData.permissionIds.length == 0) {
-            vd[3] = {
                 validateStatus: "error",
                 help: "请选择角色的权限!"
             }
@@ -128,31 +132,20 @@ export default class CreateRoleForm extends Component {
      */
     handleCancel = () => {
         //如果正在加载，不允许取消
-        if (!this.props.loading) {
+        if (!this.state.loading) {
             if (this.props.onCancel) {
                 this.props.onCancel()
             }
         }
     }
 
-    handleChangeColorComplete = (color) => {
-        let tempFormData = this.state.formData;
-        tempFormData.themecolor = color.hex
-        this.setState({
-            defalutThemeColor: color.hex,
-            formData: tempFormData,
-        })
-    }
 
-    // onSelect = (selectedKeys, info) => {
-    //     console.log('selected', selectedKeys, info);
-    // }
-
+    /**
+     * 树型选择事件.s
+     */
     onTreeSelected = (checkedKeys, info) => {
         let tempFormData = this.state.formData;
-        // checkedKeys = checkedKeys.concat(info.halfCheckedKeys) //合并子节点和父节点
-        tempFormData.permissionIds = checkedKeys;
-        // console.log("permissionIds:", tempFormData.permissionIds)
+        tempFormData.moduleIds = checkedKeys;
         this.setState({
             halfCheckedKeys: info.halfCheckedKeys,
             formData: tempFormData,
@@ -160,22 +153,17 @@ export default class CreateRoleForm extends Component {
     }
 
     render() {
-
-        const { validateList, permissionList } = this.state;
+        const { validateList } = this.state;
 
         return (
             <Modal
-                visible={this.props.visible}
+                visible={this.state.visible}
                 title="创建角色"
                 onOk={this.handleOk}
                 onCancel={this.handleCancel}
                 maskClosable={false}
-                footer={[
-                    <Button key="back" onClick={this.handleCancel}>取消</Button>,
-                    <Button key="submit" type="primary" onClick={this.handleOk}>保存</Button>,
-                ]}
-            >
-                <Spin spinning={this.props.loading}>
+                >
+                <Spin spinning={this.state.loading}>
                     <Form {...formItemLayout}>
                         <Form.Item label="角色名称" {...validateList[0]}>
                             <div>
@@ -188,47 +176,25 @@ export default class CreateRoleForm extends Component {
                                 }} value={this.state.formData.name} />
                             </div>
                         </Form.Item>
-                        <Form.Item label="角色标识" {...validateList[1]}>
-                            <div>
-                                <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
-                                    let tempFormData = this.state.formData;
-                                    tempFormData.perms = e.target.value;
-                                    this.setState({
-                                        formData: tempFormData
-                                    })
-                                }} value={this.state.formData.perms} />
-                            </div>
-                        </Form.Item>
-                        <Form.Item label="角色描述" {...validateList[2]}>
-                            <div>
-                                <Input placeholder="请输入名称" maxLength={32} onChange={(e) => {
-                                    let tempFormData = this.state.formData;
-                                    tempFormData.remark = e.target.value;
-                                    this.setState({
-                                        formData: tempFormData
-                                    })
-                                }} value={this.state.formData.remark} />
-                            </div>
-                        </Form.Item>
-                        <Form.Item label="角色授权" {...validateList[3]}>
+                        <Form.Item label="角色授权" {...validateList[1]}>
                             <div>
                                 <Row className="role_modalRow">
                                     <Col span={24}>
                                         <Tree
                                             ref = "tree"
                                             checkable
-                                            checkedKeys = {this.state.formData.permissionIds}
+                                            checkedKeys = {this.state.formData.moduleIds}
                                             onCheck={this.onTreeSelected}>
                                             {
-                                                (this.props.permissionList) ?
-                                                    this.props.permissionList.map((item) => {
+                                                (this.state.userModuleList) ?
+                                                    this.state.userModuleList.map((item) => {
                                                         return (
-                                                            <TreeNode title={item.name} key={item.id}>
+                                                            <TreeNode title={item.moduleName} key={item.id}>
                                                                 {
                                                                     (item.children) ?
                                                                         item.children.map((c_item) => {
                                                                             return (
-                                                                                <TreeNode title={c_item.name} key={c_item.id}></TreeNode>
+                                                                                <TreeNode title={c_item.moduleName} key={c_item.id}></TreeNode>
                                                                             )
                                                                         }) : null
                                                                 }
